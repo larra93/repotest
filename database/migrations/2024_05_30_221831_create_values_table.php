@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('values', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('field_id'); 
+            $table->string('value'); 
+            $table->unsignedBigInteger('daily_sheet_id'); 
+            $table->integer('row'); 
             $table->timestamps();
+
+            $table->foreign('field_id')->references('id')->on('fields')->onDelete('cascade');
+            $table->foreign('daily_sheet_id')->references('id')->on('daily_sheets')->onDelete('cascade');
         });
     }
 
