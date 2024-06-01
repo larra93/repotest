@@ -17,9 +17,11 @@ return new class extends Migration
             $table->datetime('start_date');
             $table->datetime('end_date');
             $table->unsignedBigInteger('id_company');
+            $table->unsignedBigInteger('created_by');
             $table->timestamps();
 
             $table->foreign('id_company')->references('id')->on('companies')->onDelete('cascade');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -30,6 +32,9 @@ return new class extends Migration
     {
         Schema::table('contracts', function (Blueprint $table) {
             $table->dropForeign(['id_company']);
+        });
+        Schema::table('contracts', function (Blueprint $table) {
+            $table->dropForeign(['created_by']);
         });
         Schema::dropIfExists('contracts');
     }
