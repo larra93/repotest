@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController; 
 use App\Http\Controllers\UserController; 
+use App\Http\Controllers\RoleController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -37,3 +38,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('user/register', [UserController::class, 'store']);
 Route::post('user/login', [UserController::class, 'auth']);
+Route::resource('users', UserController::class)->names('users');
+Route::resource('roles', RoleController::class)->names('roles');
