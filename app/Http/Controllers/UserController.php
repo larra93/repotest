@@ -7,17 +7,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\AuthUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
      /**
      * Display a listing of the resource.
      */
+
+     
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 5);
         $users = User::with('roles')->paginate($perPage);
-
         return response()->json($users);
     }
 
@@ -37,36 +41,49 @@ class UserController extends Controller
     try {
         $validated = $request->validated();
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
 
+        foreach ($validated['roles'] as $roleId) {
+            $role = Role::findOrFail($roleId);
+            $user->assignRole($role); // Asignar el rol al usuario
+        }
+
         return response()->json([
             'message' => 'Usuario creado con éxito.'
-        ], 201); // 201 Created status code
+        ], 201); 
 
     } catch (ValidationException $e) {
         return response()->json([
             'message' => 'Validation failed',
             'errors' => $e->errors()
-        ], 422); // 422 Unprocessable Entity status code
+        ], 422); 
 
     } catch (\Exception $e) {
+        Log::error('Error al crear el usuario: ' . $e->getMessage(), [
+            'request_data' => $request->all(),
+            'exception_message' => $e->getMessage(),
+            'exception_trace' => $e->getTraceAsString(),
+        ]);
+
         return response()->json([
             'message' => 'An error occurred',
             'error' => $e->getMessage()
-        ], 500); // 500 Internal Server Error status code
+        ], 500); 
     }
 }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $user = User::with('roles')->findOrFail($id);
+        return response()->json($user);
     }
 
     /**
@@ -80,10 +97,40 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+
+public function update(UpdateUserRequest $request, $id)
+{
+    try {
+        $validated = $request->validated();
+
+        $user = User::findOrFail($id);
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->roles()->sync($validated['roles']);
+
+        $user->save();
+
+        return response()->json(['message' => 'Usuario actualizado exitosamente']);
+    
+    } catch (\Exception $e) {
+        Log::error('Error al actualizar el usuario: ' . $e->getMessage(), [
+            'user_id' => $id,
+            'request_data' => $request->all(),
+            'exception_message' => $e->getMessage(),
+            'exception_trace' => $e->getTraceAsString(),
+        ]);
+        return response()->json([
+            'message' => 'Error al actualizar el usuario',
+            'error' => $e->getMessage()
+        ], 500); 
     }
+}
+
 
     /**
      * Remove the specified resource from storage.

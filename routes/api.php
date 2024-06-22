@@ -38,5 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('user/register', [UserController::class, 'store']);
 Route::post('user/login', [UserController::class, 'auth']);
+
+//corregir el sanctum en front end y tirar esto a rutas protegidas aca en backend
 Route::resource('users', UserController::class)->names('users');
 Route::resource('roles', RoleController::class)->names('roles');
