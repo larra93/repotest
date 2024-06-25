@@ -131,6 +131,13 @@ public function update(UpdateUserRequest $request, $id)
     }
 }
 
+    public function getUsers()
+    {
+        // Recupera todos los usuarios
+        $users = User::all(['id', 'name', 'email']);
+        return response()->json($users);
+    }
+
 
     /**
      * Remove the specified resource from storage.

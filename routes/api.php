@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController; 
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\RoleController; 
+use App\Http\Controllers\CompanyController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -42,3 +43,6 @@ Route::post('user/login', [UserController::class, 'auth']);
 //corregir el sanctum en front end y tirar esto a rutas protegidas aca en backend
 Route::resource('users', UserController::class)->names('users');
 Route::resource('roles', RoleController::class)->names('roles');
+Route::get('/getUsers', [UserController::class, 'getUsers']);
+
+Route::resource('/companies', CompanyController::class);
