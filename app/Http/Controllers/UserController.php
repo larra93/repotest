@@ -47,10 +47,10 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        foreach ($validated['roles'] as $roleId) {
-            $role = Role::findOrFail($roleId);
-            $user->assignRole($role); // Asignar el rol al usuario
-        }
+        // foreach ($validated['roles'] as $roleId) {
+        //     $role = Role::findOrFail($roleId);
+        //     $user->assignRole($role); // Asignar el rol al usuario
+        // }
 
         return response()->json([
             'message' => 'Usuario creado con éxito.'

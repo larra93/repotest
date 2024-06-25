@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-            $table->string('n_sap');
+            $table->string('NSAP');
+            $table->string('DEN');
+            $table->string('project');
+            $table->string('API');
             $table->datetime('start_date');
             $table->datetime('end_date');
             $table->unsignedBigInteger('id_company');
