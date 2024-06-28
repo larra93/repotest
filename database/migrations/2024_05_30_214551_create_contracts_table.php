@@ -13,19 +13,22 @@ return new class extends Migration
     {
         Schema::create('contracts', function (Blueprint $table) {
             $table->id();
+            $table->string('name_contract');
             $table->string('NSAP');
             $table->string('DEN');
             $table->string('project');
             $table->string('API');
+            $table->string('CC');
             $table->datetime('start_date');
             $table->datetime('end_date');
             $table->unsignedBigInteger('id_company');
             $table->unsignedBigInteger('created_by');
+            $table->boolean('is_revisor_pyc_required')->default(false);
+            $table->boolean('is_revisor_cc_required')->default(false);
+            $table->boolean('is_revisor_other_area_required')->default(false);
             $table->timestamps();
-
-            $table->foreign('id_company')->references('id')->on('companies')->onDelete('cascade');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
+        
     }
 
     /**

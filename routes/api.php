@@ -6,6 +6,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController; 
 use App\Http\Controllers\RoleController; 
 use App\Http\Controllers\CompanyController; 
+use App\Http\Controllers\ContractController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -46,3 +47,5 @@ Route::resource('roles', RoleController::class)->names('roles');
 Route::get('/getUsers', [UserController::class, 'getUsers']);
 
 Route::resource('/companies', CompanyController::class);
+
+Route::resource('/contracts', ContractController::class);
