@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('project');
             $table->string('API');
             $table->string('CC');
-            $table->datetime('start_date');
-            $table->datetime('end_date');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->unsignedBigInteger('id_company');
             $table->unsignedBigInteger('created_by');
             $table->boolean('is_revisor_pyc_required')->default(false);

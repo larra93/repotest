@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreContractRequest;
 use Spatie\Permission\Models\Role;
 use App\Models\Contract;
+
 
 
 class ContractController extends Controller
@@ -15,8 +17,27 @@ class ContractController extends Controller
      */
     public function index()
     {
-        return response()->json(['message' => 'LLego'], 201);
+        $contracts = Contract::with([
+            'users' => function($query) {
+                $query->withPivot('role_id')
+                      ->leftJoin('roles', 'contract_user.role_id', '=', 'roles.id')
+                      ->select('users.*', 'roles.name as role_name');
+            }
+        ])->get();
+
+        $contracts->transform(function($contract) {
+            $contract->encargadoContratista = $contract->users->where('role_name', 'encargado_contratista');
+            $contract->adminDeContrato = $contract->users->where('role_name', 'admin_contrato');
+            $contract->revisorPYC = $contract->users->where('role_name', 'revisor_pyc');
+            $contract->revisorCC = $contract->users->where('role_name', 'revisor_cc');
+            $contract->revisorOtraArea = $contract->users->where('role_name', 'revisor_otra_area');
+            unset($contract->users);
+            return $contract;
+        });
+
+        return response()->json($contracts, 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -29,103 +50,73 @@ class ContractController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreContractRequest $request)
     {
-        // $validatedData = $request->validated();
-
-        $contract = Contract::create([
-            'name_contract' => $request->input('contractName'),
-            'NSAP' => $request->input('NSAP'),
-            'DEN' => $request->input('DEN'),
-            'project' => $request->input('project'),
-            'API' => $request->input('API'),
-            'start_date' => $request->input('start_date'),
-            'end_date' => $request->input('end_date'),
-            'id_company' => $request->input('id_company'),
-            'created_by' => $request->input('created_by'),
-            'CC' => $request->input('cc'),
-            'is_revisor_pyc_required' => $request->input('is_revisor_pyc_required') ?? false,
-            'is_revisor_cc_required' => $request->input('is_revisor_cc_required') ?? false,
-            'is_revisor_other_area_required' => $request->input('is_revisor_other_area_required') ?? false,
-        ]);
+        $validatedData = $request->validated();
     
-        // Asignar revisores
-        if ($request->has('revisor_pyc')) {
-            $roleId = Role::where('name', 'revisor_pyc')->first()->id;
-            foreach ($request->input('revisor_pyc') as $userId) {
-                $contract->users()->attach($userId, ['role_id' => $roleId]);
-            }
-        }
+        DB::beginTransaction();
     
-        if ($request->has('revisor_cc')) {
-            $roleId = Role::where('name', 'revisor_cc')->first()->id;
-            foreach ($request->input('revisor_cc') as $userId) {
-                $contract->users()->attach($userId, ['role_id' => $roleId]);
-            }
-        }
+        try {
+            // Crear el contrato
+            $contract = Contract::create([
+                'name_contract' => $validatedData['name_contract'],
+                'NSAP' => $validatedData['NSAP'],
+                'DEN' => $validatedData['DEN'],
+                'project' => $validatedData['project'],
+                'API' => $validatedData['API'],
+                'start_date' => $validatedData['start_date'],
+                'end_date' => $validatedData['end_date'],
+                'id_company' => $validatedData['id_company'],
+                'created_by' => $validatedData['created_by'],
+                'CC' => $validatedData['CC'],
+                'is_revisor_pyc_required' => $validatedData['is_revisor_pyc_required'] ?? false,
+                'is_revisor_cc_required' => $validatedData['is_revisor_cc_required'] ?? false,
+                'is_revisor_other_area_required' => $validatedData['is_revisor_other_area_required'] ?? false,
+            ]);
     
-        if ($request->has('revisor_other_area')) {
-            $roleId = Role::where('name', 'revisor_otra_area')->first()->id;
-            foreach ($request->input('revisor_other_area') as $userId) {
-                $contract->users()->attach($userId, ['role_id' => $roleId]);
+            // Asignar revisores
+            if (isset($validatedData['revisorPYC'])) {
+                $roleId = Role::where('name', 'revisor_pyc')->first()->id;
+                foreach ($validatedData['revisorPYC'] as $userId) {
+                    $contract->users()->attach($userId, ['role_id' => $roleId]);
+                }
             }
-        }
     
-        if ($request->has('admin_contract')) {
-            $roleId = Role::where('name', 'admin_contrato')->first()->id;
-            foreach ($request->input('admin_contract') as $userId) {
-                $contract->users()->attach($userId, ['role_id' => $roleId]);
+            if (isset($validatedData['revisorCC'])) {
+                $roleId = Role::where('name', 'revisor_cc')->first()->id;
+                foreach ($validatedData['revisorCC'] as $userId) {
+                    $contract->users()->attach($userId, ['role_id' => $roleId]);
+                }
             }
+    
+            if (isset($validatedData['revisorOtraArea'])) {
+                $roleId = Role::where('name', 'revisor_otra_area')->first()->id;
+                foreach ($validatedData['revisorOtraArea'] as $userId) {
+                    $contract->users()->attach($userId, ['role_id' => $roleId]);
+                }
+            }
+    
+            if (isset($validatedData['adminDeContrato'])) {
+                $roleId = Role::where('name', 'admin_contrato')->first()->id;
+                foreach ($validatedData['adminDeContrato'] as $userId) {
+                    $contract->users()->attach($userId, ['role_id' => $roleId]);
+                }
+            }
+            if (isset($validatedData['encargadoContratista'])) {
+                $roleId = Role::where('name', 'encargado_contratista')->first()->id;
+                foreach ($validatedData['encargadoContratista'] as $userId) {
+                    $contract->users()->attach($userId, ['role_id' => $roleId]);
+                }
+            }
+    
+            DB::commit();
+    
+            return response()->json(['message' => 'Contrato creado con éxito'], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al crear el contrato', 'error' => $e->getMessage()], 500);
         }
-
-        // Crear el contrato
-        // $contract = Contract::create([
-        //     'name_contract' => $validatedData['name_contract'],
-        //     'NSAP' => $validatedData['NSAP'],
-        //     'DEN' => $validatedData['DEN'],
-        //     'project' => $validatedData['project'],
-        //     'API' => $validatedData['API'],
-        //     'start_date' => $validatedData['start_date'],
-        //     'end_date' => $validatedData['end_date'],
-        //     'id_company' => $validatedData['id_company'],
-        //     'created_by' => $validatedData['created_by'],
-        //     'cc' => $validatedData['cc'],
-        //     'is_revisor_pyc_required' => $validatedData['is_revisor_pyc_required'] ?? false,
-        //     'is_revisor_cc_required' => $validatedData['is_revisor_cc_required'] ?? false,
-        //     'is_revisor_other_area_required' => $validatedData['is_revisor_other_area_required'] ?? false,
-        // ]);
-
-        // // Asignar revisores
-        // if (isset($validatedData['revisor_pyc'])) {
-        //     $roleId = Role::where('name', 'revisor_pyc')->first()->id;
-        //     foreach ($validatedData['revisor_pyc'] as $userId) {
-        //         $contract->users()->attach($userId, ['role_id' => $roleId]);
-        //     }
-        // }
-
-        // if (isset($validatedData['revisor_cc'])) {
-        //     $roleId = Role::where('name', 'revisor_cc')->first()->id;
-        //     foreach ($validatedData['revisor_cc'] as $userId) {
-        //         $contract->users()->attach($userId, ['role_id' => $roleId]);
-        //     }
-        // }
-
-        // if (isset($validatedData['revisor_other_area'])) {
-        //     $roleId = Role::where('name', 'revisor_otra_area')->first()->id;
-        //     foreach ($validatedData['revisor_other_area'] as $userId) {
-        //         $contract->users()->attach($userId, ['role_id' => $roleId]);
-        //     }
-        // }
-
-        // if (isset($validatedData['admin_contract'])) { 
-        //     $roleId = Role::where('name', 'admin_contrato')->first()->id;
-        //     foreach ($validatedData['admin_contract'] as $userId) {
-        //         $contract->users()->attach($userId, ['role_id' => $roleId]);
-        //     }
-        
-        return response()->json(['message' => 'Contrato creado con éxito'], 201);
     }
-
     /**
      * Display the specified resource.
      */

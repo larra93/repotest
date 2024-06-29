@@ -14,8 +14,13 @@ class Contract extends Model
         'is_revisor_pyc_required', 'is_revisor_cc_required', 'is_revisor_other_area_required'
     ];
 
+    // public function users()
+    // {
+    //     return $this->belongsToMany(User::class)->withPivot('role_id')->withTimestamps();
+    // }
+
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('role_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'contract_user')->withPivot('role_id')->withTimestamps();
     }
 }

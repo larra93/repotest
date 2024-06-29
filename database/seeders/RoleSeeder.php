@@ -20,6 +20,7 @@ class RoleSeeder extends Seeder
         $role_4 = Role::create(['name' => 'revisor_cc']);
         $role_5 = Role::create(['name' => 'revisor_otra_area']);
         $role_6 = Role::create(['name' => 'admin_contrato']);
+        $role_7 = Role::create(['name' => 'encargado_contratista']);
 
         //Permisos revisar mas adelante para el filtrado de ventanas
         Permission::create(['name' => 'contracts.create.index'])->syncRoles([$role_1, $role_2]);
