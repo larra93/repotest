@@ -43,4 +43,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+public function contracts()
+{
+    return $this->belongsToMany(Contract::class, 'contract_user')->withPivot('role_id')->withTimestamps();
+}
+
 }

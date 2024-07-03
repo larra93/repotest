@@ -15,7 +15,6 @@ class UsersTableSeeder extends Seeder
     public function run(): void
     {   
        
-
         User::create([
             'name' => 'Jane Doe',
             'email' => 'janedoe@example.com',
@@ -24,7 +23,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('super_admin');
         
         User::create([
             'name' => 'Admin User',
@@ -34,7 +33,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('System admin');
+        ])->assignRole('admin_sistema');
 
         User::create([
             'name' => 'John Doe',
@@ -44,7 +43,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Approve');
+        ])->assignRole('revisor_pyc');
         
         User::create([
             'name' => 'Alice Johnson',
@@ -54,7 +53,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('revisor_cc');
         
         User::create([
             'name' => 'Bob Smith',
@@ -64,7 +63,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('revisor_otra_area');
         
         User::create([
             'name' => 'Carol Williams',
@@ -74,7 +73,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('admin_terreno');
         
         User::create([
             'name' => 'David Brown',
@@ -84,7 +83,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('super_admin');
         
         User::create([
             'name' => 'Emily Davis',
@@ -94,7 +93,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('super_admin');
         
         User::create([
             'name' => 'Frank Miller',
@@ -104,7 +103,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('admin_terreno');
         
         User::create([
             'name' => 'Grace Wilson',
@@ -114,7 +113,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('super_admin');
         
         User::create([
             'name' => 'Henry Moore',
@@ -124,7 +123,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
+        ])->assignRole('super_admin');
         
         User::create([
             'name' => 'Ivy Taylor',
@@ -134,7 +133,6 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('Super Admin');
-        
+        ])->assignRole('revisor_otra_area');
     }
 }
