@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('DEN');
             $table->string('project');
             $table->string('API');
-            $table->string('CC');
             $table->date('start_date');
             $table->date('end_date');
             $table->unsignedBigInteger('id_company');
@@ -27,6 +26,7 @@ return new class extends Migration
             $table->boolean('is_revisor_cc_required')->default(false);
             $table->boolean('is_revisor_other_area_required')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
         
     }

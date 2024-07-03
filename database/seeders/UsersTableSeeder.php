@@ -73,7 +73,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('admin_contrato');
+        ])->assignRole('admin_terreno');
         
         User::create([
             'name' => 'David Brown',
@@ -103,7 +103,7 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
-        ])->assignRole('admin_contrato');
+        ])->assignRole('admin_terreno');
         
         User::create([
             'name' => 'Grace Wilson',
