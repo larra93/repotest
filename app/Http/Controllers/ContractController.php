@@ -17,7 +17,7 @@ class ContractController extends Controller
      */
     public function index(Request $request)
 {
-    $perPage = $request->get('per_page', 10); // Obtener el número de registros por página desde la solicitud, o usar 10 como valor predeterminado
+    $perPage = $request->get('per_page', 10);
     $contracts = Contract::with([
         'company:id,name,rut_number,rut_verifier',
         'users' => function ($query) {
@@ -27,7 +27,6 @@ class ContractController extends Controller
         }
     ])->paginate($perPage);
 
-    // Transformar los contratos en el formato deseado antes de devolver la respuesta
     $formattedContracts = $contracts->map(function ($contract) {
         return [
             'id' => $contract->id,
@@ -42,6 +41,7 @@ class ContractController extends Controller
             'encargadoContratista' => $contract->users->where('role_name', 'encargado_contratista')->values(),
             'adminTerreno' => $contract->users->where('role_name', 'admin_terreno')->values(),
             'visualizador' => $contract->users->where('role_name', 'visualizador')->values(),
+            'encargadoCodelco' => $contract->users->where('role_name', 'encargado_codelco')->values(),
         ];
     });
 
@@ -73,7 +73,6 @@ class ContractController extends Controller
         DB::beginTransaction();
     
         try {
-            // Crear el contrato
             $contract = Contract::create([
                 'name_contract' => $validatedData['name_contract'],
                 'NSAP' => $validatedData['NSAP'],
@@ -90,7 +89,6 @@ class ContractController extends Controller
                 'is_revisor_other_area_required' => $validatedData['revisorOtraAreaRequired'] ?? false,
             ]);
     
-            // Asignar revisores
             if (isset($validatedData['revisorPYC'])) {
                 $roleId = Role::where('name', 'revisor_pyc')->first()->id;
                 foreach ($validatedData['revisorPYC'] as $userId) {
@@ -130,6 +128,12 @@ class ContractController extends Controller
                     $contract->users()->attach($userId, ['role_id' => $roleId]);
                 }
             }
+            if (isset($validatedData['encargadoCodelco'])) {
+                $roleId = Role::where('name', 'encargado_codelco')->first()->id;
+                foreach ($validatedData['encargadoCodelco'] as $userId) {
+                    $contract->users()->attach($userId, ['role_id' => $roleId]);
+                }
+            }
     
             DB::commit();
     
@@ -144,7 +148,6 @@ class ContractController extends Controller
      */
     public function show($id)
     {
-    // Recuperar el contrato por su ID junto con sus relaciones
     $contract = Contract::with([
         'company:id,name,rut_number,rut_verifier',
         'users' => function ($query) {
@@ -154,7 +157,6 @@ class ContractController extends Controller
         }
     ])->findOrFail($id);
 
-    // Formatear los datos del contrato
     $formattedContract = [
         'id' => $contract->id,
         'nombre_contrato' => $contract->name_contract,
@@ -174,6 +176,7 @@ class ContractController extends Controller
         'revisorPYC' => $contract->users->where('role_name', 'revisor_pyc')->values(),
         'revisorCC' => $contract->users->where('role_name', 'revisor_cc')->values(),
         'revisorOtraArea' => $contract->users->where('role_name', 'revisor_otra_area')->values(),
+        'encargadoCodelco' => $contract->users->where('role_name', 'encargado_codelco')->values(),
     ];
 
     return response()->json($formattedContract, 200);
@@ -213,13 +216,13 @@ class ContractController extends Controller
                 'is_revisor_other_area_required' => $validatedData['revisorOtraAreaRequired'] ?? false,
             ]);
     
-            // Actualizar usuarios asociados (roles)
             $this->syncRoles($contract, 'revisor_pyc', $validatedData['revisorPYC'] ?? []);
             $this->syncRoles($contract, 'revisor_cc', $validatedData['revisorCC'] ?? []);
             $this->syncRoles($contract, 'revisor_otra_area', $validatedData['revisorOtraArea'] ?? []);
             $this->syncRoles($contract, 'admin_terreno', $validatedData['adminDeTerreno'] ?? []);
             $this->syncRoles($contract, 'encargado_contratista', $validatedData['encargadoContratista'] ?? []);
             $this->syncRoles($contract, 'visualizador', $validatedData['visualizador'] ?? []);
+            $this->syncRoles($contract, 'encargado_codelco', $validatedData['encargadoCodelco'] ?? []);
     
             DB::commit();
     

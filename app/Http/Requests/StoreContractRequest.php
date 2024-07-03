@@ -46,6 +46,8 @@ class StoreContractRequest extends FormRequest
         'visualizador.*' => 'exists:users,id',
         'encargadoContratista' => 'required|array',
         'encargadoContratista.*' => 'exists:users,id',
+        'encargadoCodelco' => 'required|array',
+        'encargadoCodelco.*' => 'exists:users,id',
     ];
 }
 
@@ -69,7 +71,8 @@ class StoreContractRequest extends FormRequest
             'visualizador.required' => 'El campo visualizador es obligatorio.',
             'visualizador.*.exists' => 'El usuario seleccionado no es válido.',
             'encargadoContratista.required' => 'El campo encargado contratista  es obligatorio.',
-            'encargadoContratista.*.exists' => 'El usuario seleccionado no es válido.'
+            'encargadoContratista.*.exists' => 'El usuario seleccionado no es válido.',
+            'encargadoCodelco.*.exists' => 'El usuario seleccionado no es válido.'
         ];
     }
 }
