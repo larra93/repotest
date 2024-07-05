@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreContractRequest;
 use Spatie\Permission\Models\Role;
 use App\Models\Contract;
+use App\Models\DailySheet;
+use App\Models\Field;
 
 
 
@@ -135,6 +137,47 @@ class ContractController extends Controller
                 }
             }
     
+            //De prueba despues hay que definir que campos tendria 
+            $personalSheet = DailySheet::create([
+                'name' => 'Personal',
+                'step' => '1',
+                'contract_id' => $contract->id,
+            ]);
+            Field::create([
+                'name' => 'Nombre',
+                'description' => 'Campo para rellenar el nombre',
+                'field_type' => 'text',
+                'step' => '1',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Apellidos',
+                'description' => 'Campo para rellenar los apellidos',
+                'field_type' => 'text',
+                'step' => '2',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            
+            $maquinariaSheet = DailySheet::create([
+                'name' => 'Maquinarias',
+                'step' => '1',
+                'contract_id' => $contract->id,
+            ]);
+            Field::create([
+                'name' => 'Nombre',
+                'description' => 'Campo para el nombre',
+                'field_type' => 'text',
+                'step' => '1',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Modelo',
+                'description' => 'Campo para rellenar el modelo',
+                'field_type' => 'text',
+                'step' => '2',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+        
             DB::commit();
     
             return response()->json(['message' => 'Contrato creado con éxito'], 201);
@@ -232,6 +275,37 @@ class ContractController extends Controller
             return response()->json(['message' => 'Error al actualizar el contrato', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function getEstructure($id)
+{
+    try {
+        // Obtener el contrato y sus hojas diarias asociadas
+        $contract = Contract::findOrFail($id);
+        $dailySheets = $contract->dailySheets()->orderBy('step')->get();
+
+        $steps = [];
+
+        foreach ($dailySheets as $sheet) {
+            $fields = $sheet->fields()->orderBy('step')->get();
+
+            $step = [
+                'idSheet' => $sheet->id,
+                'sheet' => $sheet->name,
+                'fields' => $fields,
+            ];
+
+            $steps[] = $step;
+        }
+
+        return response()->json([
+            'steps' => $steps,
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error al obtener estructura del contrato', 'message' => $e->getMessage()], 500);
+    }
+}
+
     
     
     private function syncRoles($contract, $roleName, $userIds)

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable(); 
             $table->string('field_type');
+            $table->integer('step')->nullable();
             $table->unsignedBigInteger('daily_sheet_id'); 
             $table->timestamps();
 

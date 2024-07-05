@@ -49,3 +49,4 @@ Route::get('/getUsers', [UserController::class, 'getUsers']);
 Route::resource('/companies', CompanyController::class);
 
 Route::resource('/contracts', ContractController::class);
+Route::get('/contracts/{id}/dailySheet', [ContractController::class, 'getEstructure']);

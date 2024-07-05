@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('daily_sheets', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->integer('step')->nullable();
             $table->unsignedBigInteger('contract_id'); 
             $table->timestamps();
 

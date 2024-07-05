@@ -26,8 +26,8 @@ class Contract extends Model
         return $this->belongsTo(Company::class, 'id_company');
     }
 
-    // public function users()
-    // {
-    //     return $this->belongsToMany(User::class, 'contract_user')->withPivot('role_id')->withTimestamps();
-    // }
+    public function dailySheets()
+    {
+        return $this->hasMany(DailySheet::class, 'contract_id');
+    }
 }
