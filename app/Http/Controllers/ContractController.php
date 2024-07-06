@@ -136,48 +136,285 @@ class ContractController extends Controller
                     $contract->users()->attach($userId, ['role_id' => $roleId]);
                 }
             }
-    
-            //De prueba despues hay que definir que campos tendria 
+    //* Personal
             $personalSheet = DailySheet::create([
                 'name' => 'Personal',
                 'step' => '1',
                 'contract_id' => $contract->id,
             ]);
             Field::create([
-                'name' => 'Nombre',
-                'description' => 'Campo para rellenar el nombre',
+                'name' => 'RUT',
+                'description' => 'Rut del trabajador',
                 'field_type' => 'text',
                 'step' => '1',
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
-                'name' => 'Apellidos',
-                'description' => 'Campo para rellenar los apellidos',
-                'field_type' => 'text',
-                'step' => '2',
+                'name' => 'Género',
+                'description' => 'Género del trabajador',
+                'field_type' => 'list',
+                'step' => '3',
                 'daily_sheet_id' => $personalSheet->id,
             ]);
-            
+            Field::create([
+                'name' => 'Cargo',
+                'description' => 'Cargo del trabajador',
+                'field_type' => 'list',
+                'step' => '4    ',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Categoría',
+                'description' => 'Categoría del trabajador (Directo, Indirecto, etc)',
+                'field_type' => 'list',
+                'step' => '5',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Cuadrilla o Grupo',
+                'description' => 'Cuadrilla o Grupo del trabajador',
+                'field_type' => 'list',
+                'step' => '6',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Jornada',
+                'description' => 'Jornada del trabajador (10x5, 5x2, etc)',
+                'field_type' => 'list',
+                'step' => '7',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Turno',
+                'description' => 'Turno del trabajador (Diurno, nocturno)',
+                'field_type' => 'list',
+                'step' => '8',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Estado Personal',
+                'description' => 'Estado del trabajador (Trabajando, Licencia, etc)',
+                'field_type' => 'list',
+                'step' => '9',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Área de Trabajo',
+                'description' => 'Área de trabajo donde se desempeñó el trabajador',
+                'field_type' => 'list',
+                'step' => '10',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'HH Trabajadas',
+                'description' => 'HH Trabajadas por el trabajador',
+                'field_type' => 'integer',
+                'step' => '11',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Comentarios EECC',
+                'description' => 'Comentarios de la Empresa colaboradora',
+                'field_type' => 'integer',
+                'step' => '12',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Comentarios Codelco',
+                'description' => 'Comentarios del equipo de Codelco',
+                'field_type' => 'integer',
+                'step' => '13',
+                'daily_sheet_id' => $personalSheet->id,
+            ]);
+
+    //* Fin Personal            
+
+    //* Maquinarias
+
             $maquinariaSheet = DailySheet::create([
                 'name' => 'Maquinarias',
-                'step' => '1',
+                'step' => '2',
                 'contract_id' => $contract->id,
             ]);
             Field::create([
-                'name' => 'Nombre',
-                'description' => 'Campo para el nombre',
+                'name' => 'Patente o Identificación',
+                'description' => 'Patente o Identificación de la maquinaria',
                 'field_type' => 'text',
                 'step' => '1',
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
-                'name' => 'Modelo',
-                'description' => 'Campo para rellenar el modelo',
-                'field_type' => 'text',
+                'name' => 'Tipo de Equipo',
+                'description' => 'Tipo de equipo ',
+                'field_type' => 'list',
                 'step' => '2',
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
-        
+            Field::create([
+                'name' => 'Modelo de Equipo',
+                'description' => 'Modelo de equipo',
+                'field_type' => 'text',
+                'step' => '3',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Turno Equipo',
+                'description' => 'Turno de la maquinaria (Diurno, Nocturno)',
+                'field_type' => 'list',
+                'step' => '4',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Operador Presente',
+                'description' => 'Estuvo el operador presente de la maquinaria',
+                'field_type' => 'list',
+                'step' => '5',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Área de Trabajo',
+                'description' => 'Área de trabajo donde se desempeñó la maquinaria',
+                'field_type' => 'list',
+                'step' => '6',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Horas Operativas',
+                'description' => 'Horas en que el equipo se encuentra entregada a su(s) operador(es), en condiciones óptimas y cumpliendo su tarea asignada.',
+                'field_type' => 'integer',
+                'step' => '7',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Horas No Operativas',
+                'description' => 'Horas en que el equipo, estando disponible, no es operado.',
+                'field_type' => 'integer',
+                'step' => '8',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Horas Mantención Programada',
+                'description' => 'Horas en que el equipo estuvo en una mantención programada',
+                'field_type' => 'integer',
+                'step' => '8',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Horas Equipo en Panne',
+                'description' => 'Horas en el que el equipo estuvo con falla o en panne.',
+                'field_type' => 'list',
+                'step' => '9',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Comentarios EECC',
+                'description' => 'Comentarios de la Empresa colaboradora',
+                'field_type' => 'text',
+                'step' => '10',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Comentarios Codelco',
+                'description' => 'Comentarios del equipo de Codelco',
+                'field_type' => 'text',
+                'step' => '11',
+                'daily_sheet_id' => $maquinariaSheet->id,
+            ]);
+    //* Fin Maquinarias
+
+    //* Interferencias
+
+ 
+
+    $interferenciasSheet = DailySheet::create([
+        'name' => 'Interferencias',
+        'step' => '3',
+        'contract_id' => $contract->id,
+    ]);
+
+    Field::create([
+        'name' => 'Categoría',
+        'description' => 'Categoria de la interferencia',
+        'field_type' => 'list',
+        'step' => '1',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Subcategoría',
+        'description' => 'Subcategoría de la interferencia',
+        'field_type' => 'list',
+        'step' => '2',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Responsable',
+        'description' => 'Responsable de la interferencia (EECC, Codelco, Otro)',
+        'field_type' => 'list',
+        'step' => '3',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Hora Inicio',
+        'description' => 'Hora de inicio de la interferencia',
+        'field_type' => 'hour',
+        'step' => '4',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Hora Fin',
+        'description' => 'Hora de fin de la interferencia',
+        'field_type' => 'hour',
+        'step' => '5',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Cantidad Personal Involucrado',
+        'description' => 'Cantidad de personal involucrado en la interferencia',
+        'field_type' => 'integer',
+        'step' => '6',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'HH Totales',
+        'description' => 'HH totales de la interferencia',
+        'field_type' => 'integer',
+        'step' => '7',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'HM Totales',
+        'description' => 'Horas maquinas totales de la interferencia',
+        'field_type' => 'integer',
+        'step' => '8',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Descripción',
+        'description' => 'Descripción de la interferencia',
+        'field_type' => 'text',
+        'step' => '9',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Comentarios EECC',
+        'description' => 'Comentarios de la Empresa colaboradora',
+        'field_type' => 'integer',
+        'step' => '10',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    Field::create([
+        'name' => 'Comentarios Codelco',
+        'description' => 'Comentarios del equipo de Codelco',
+        'field_type' => 'integer',
+        'step' => '11',
+        'daily_sheet_id' => $interferenciasSheet->id,
+    ]);
+    
+
+
+
+
+
             DB::commit();
     
             return response()->json(['message' => 'Contrato creado con éxito'], 201);
