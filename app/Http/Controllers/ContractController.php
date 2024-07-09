@@ -322,10 +322,7 @@ class ContractController extends Controller
             ]);
     //* Fin Maquinarias
 
-    //* Interferencias
-
- 
-
+//* Interferencias   
     $interferenciasSheet = DailySheet::create([
         'name' => 'Interferencias',
         'step' => '3',
@@ -410,8 +407,7 @@ class ContractController extends Controller
         'daily_sheet_id' => $interferenciasSheet->id,
     ]);
     
-
-
+//* Fin Interferencias
 
 
 
