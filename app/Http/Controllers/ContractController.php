@@ -141,7 +141,7 @@ class ContractController extends Controller
             }
 
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-            $out->writeln("Hello from dd" . $validatedData['start_date']);
+           // $out->writeln("Hello from dd" . $validatedData['start_date']);
 
         //* Personal
             $personalSheet = DailySheet::create([
@@ -421,7 +421,7 @@ class ContractController extends Controller
             $end = Carbon::createFromFormat('Y-m-d', $validatedData['end_date']);
 
             while ($start->lte($end)) {
-                $out->writeln("Hello from dddd" .$start->format('Y-m-d'));
+              //  $out->writeln("Hello from dddd" .$start->format('Y-m-d'));
                 try {
                     $dailys = Dailys::create([
                         'date' => $start->format('Y-m-d'),

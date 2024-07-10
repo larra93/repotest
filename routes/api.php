@@ -7,7 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController; 
 use App\Http\Controllers\CompanyController; 
 use App\Http\Controllers\ContractController; 
-use App\Http\Controllers\DailysControllerController; 
+use App\Http\Controllers\DailysController; 
 
 
 /*
@@ -52,3 +52,5 @@ Route::resource('/companies', CompanyController::class);
 
 Route::resource('/contracts', ContractController::class);
 Route::get('/contracts/{id}/dailySheet', [ContractController::class, 'getEstructure']);
+Route::resource('/Dailys', DailysController::class);
+

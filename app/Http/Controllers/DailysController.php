@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Dailys;
+use Illuminate\Support\Facades\Hash;
+
 
 class DailysController extends Controller
 {
@@ -12,8 +14,12 @@ class DailysController extends Controller
      */
     public function index(Request $request)
     {
+        $out = new \Symfony\Component\Console\Output\ConsoleOutput();
         $perPage = $request->get('per_page', 5);
-        $dailys = Dailys::all()->paginate($perPage);
+        $dailys = Dailys::join('states', 'dailys.state_id', '=', 'states.id')
+    ->select('dailys.*', 'states.name AS state_name')
+    ->paginate($perPage);
+//    $out->writeln($dailys );
         return response()->json($dailys);
     }
 
