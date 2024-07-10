@@ -24,9 +24,6 @@ class ContractController extends Controller
     public function index(Request $request)
     {
 
-
-
-
         $perPage = $request->get('per_page', 10);
         $contracts = Contract::with([
             'company:id,name,rut_number,rut_verifier',
@@ -80,12 +77,7 @@ class ContractController extends Controller
         $validatedData = $request->validated();
 
         DB::beginTransaction();
-
-
         try {
-
-
-
             $contract = Contract::create([
                 'name_contract' => $validatedData['name_contract'],
                 'NSAP' => $validatedData['NSAP'],
@@ -151,7 +143,7 @@ class ContractController extends Controller
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
             $out->writeln("Hello from dd" . $validatedData['start_date']);
 
-            //* Personal
+        //* Personal
             $personalSheet = DailySheet::create([
                 'name' => 'Personal',
                 'step' => '1',
@@ -242,9 +234,9 @@ class ContractController extends Controller
                 'daily_sheet_id' => $personalSheet->id,
             ]);
 
-            //* Fin Personal            
+        //* Fin Personal            
 
-            //* Maquinarias
+        //* Maquinarias
 
             $maquinariaSheet = DailySheet::create([
                 'name' => 'Maquinarias',
@@ -335,9 +327,9 @@ class ContractController extends Controller
                 'step' => '11',
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
-            //* Fin Maquinarias
+        //* Fin Maquinarias
 
-            //* Interferencias   
+        //* Interferencias   
             $interferenciasSheet = DailySheet::create([
                 'name' => 'Interferencias',
                 'step' => '3',
@@ -421,22 +413,15 @@ class ContractController extends Controller
                 'step' => '11',
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
+        //* Fin Interferencias
 
-            //* Fin Interferencias
 
-            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-            $out->writeln("Hello from 11" . $validatedData['start_date']);
-
+        //*crear Dailys por cada fecha 
             $start = Carbon::createFromFormat('Y-m-d', $validatedData['start_date']);
             $end = Carbon::createFromFormat('Y-m-d', $validatedData['end_date']);
 
-            $out->writeln("Hello from 22" . $start);
-
             while ($start->lte($end)) {
-
                 $out->writeln("Hello from dddd" .$start->format('Y-m-d'));
-
-
                 try {
                     $dailys = Dailys::create([
                         'date' => $start->format('Y-m-d'),
@@ -444,14 +429,12 @@ class ContractController extends Controller
                         'contract_id' => $contract->id,
                     ]);
                 } catch (\Exception $e) {
-                    // Manejar el error, por ejemplo, registrarlo o enviar una respuesta de error.
-                    $out->writeln("error" . $e->getMessage());
-                    // Opcional: enviar una respuesta o redirigir al usuario a otra página.
+                    //$out->writeln("error" . $e->getMessage());
                     return response()->json(['message' => 'Error al crear el contrato', 'error' => $e->getMessage()], 500);
                 }
-
                 $start->addDay();
             }
+        //*Fin Dailys por cada fecha 
 
             DB::commit();
 
