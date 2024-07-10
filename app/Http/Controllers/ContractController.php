@@ -8,7 +8,11 @@ use App\Http\Requests\StoreContractRequest;
 use Spatie\Permission\Models\Role;
 use App\Models\Contract;
 use App\Models\DailySheet;
+use App\Models\Dailys;
 use App\Models\Field;
+use Carbon\Carbon;
+use App\Http\Controllers\Log;
+
 
 
 
@@ -18,42 +22,46 @@ class ContractController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    $perPage = $request->get('per_page', 10);
-    $contracts = Contract::with([
-        'company:id,name,rut_number,rut_verifier',
-        'users' => function ($query) {
-            $query->withPivot('role_id')
-                ->leftJoin('roles', 'contract_user.role_id', '=', 'roles.id')
-                ->select('users.id', 'users.name', 'roles.name as role_name', 'contract_user.contract_id');
-        }
-    ])->paginate($perPage);
-
-    $formattedContracts = $contracts->map(function ($contract) {
-        return [
-            'id' => $contract->id,
-            'nombre_contrato' => $contract->name_contract,
-            'NSAP' => $contract->NSAP,
-            'DEN' => $contract->DEN,
-            'proyecto' => $contract->project,
-            'API' => $contract->API,
-            'id_company' => $contract->id_company,
-            'rut_contratista' => $contract->company->rut_number . '-' . $contract->company->rut_verifier,
-            'empresa_contratista' => $contract->company->name,
-            'encargadoContratista' => $contract->users->where('role_name', 'encargado_contratista')->values(),
-            'adminTerreno' => $contract->users->where('role_name', 'admin_terreno')->values(),
-            'visualizador' => $contract->users->where('role_name', 'visualizador')->values(),
-            'encargadoCodelco' => $contract->users->where('role_name', 'encargado_codelco')->values(),
-        ];
-    });
+    {
 
 
-    return response()->json([
-        'data' => $formattedContracts,
-        'total' => $contracts->total(), 
-        'per_page' => $contracts->perPage(), 
-        'current_page' => $contracts->currentPage(),
-    ], 200);
+
+
+        $perPage = $request->get('per_page', 10);
+        $contracts = Contract::with([
+            'company:id,name,rut_number,rut_verifier',
+            'users' => function ($query) {
+                $query->withPivot('role_id')
+                    ->leftJoin('roles', 'contract_user.role_id', '=', 'roles.id')
+                    ->select('users.id', 'users.name', 'roles.name as role_name', 'contract_user.contract_id');
+            }
+        ])->paginate($perPage);
+
+        $formattedContracts = $contracts->map(function ($contract) {
+            return [
+                'id' => $contract->id,
+                'nombre_contrato' => $contract->name_contract,
+                'NSAP' => $contract->NSAP,
+                'DEN' => $contract->DEN,
+                'proyecto' => $contract->project,
+                'API' => $contract->API,
+                'id_company' => $contract->id_company,
+                'rut_contratista' => $contract->company->rut_number . '-' . $contract->company->rut_verifier,
+                'empresa_contratista' => $contract->company->name,
+                'encargadoContratista' => $contract->users->where('role_name', 'encargado_contratista')->values(),
+                'adminTerreno' => $contract->users->where('role_name', 'admin_terreno')->values(),
+                'visualizador' => $contract->users->where('role_name', 'visualizador')->values(),
+                'encargadoCodelco' => $contract->users->where('role_name', 'encargado_codelco')->values(),
+            ];
+        });
+
+
+        return response()->json([
+            'data' => $formattedContracts,
+            'total' => $contracts->total(),
+            'per_page' => $contracts->perPage(),
+            'current_page' => $contracts->currentPage(),
+        ], 200);
     }
 
 
@@ -62,7 +70,6 @@ class ContractController extends Controller
      */
     public function create()
     {
-        
     }
 
     /**
@@ -71,10 +78,14 @@ class ContractController extends Controller
     public function store(StoreContractRequest $request)
     {
         $validatedData = $request->validated();
-    
+
         DB::beginTransaction();
-    
+
+
         try {
+
+
+
             $contract = Contract::create([
                 'name_contract' => $validatedData['name_contract'],
                 'NSAP' => $validatedData['NSAP'],
@@ -90,28 +101,28 @@ class ContractController extends Controller
                 'is_revisor_cc_required' => $validatedData['revisorCCRequired'] ?? false,
                 'is_revisor_other_area_required' => $validatedData['revisorOtraAreaRequired'] ?? false,
             ]);
-    
+
             if (isset($validatedData['revisorPYC'])) {
                 $roleId = Role::where('name', 'revisor_pyc')->first()->id;
                 foreach ($validatedData['revisorPYC'] as $userId) {
                     $contract->users()->attach($userId, ['role_id' => $roleId]);
                 }
             }
-    
+
             if (isset($validatedData['revisorCC'])) {
                 $roleId = Role::where('name', 'revisor_cc')->first()->id;
                 foreach ($validatedData['revisorCC'] as $userId) {
                     $contract->users()->attach($userId, ['role_id' => $roleId]);
                 }
             }
-    
+
             if (isset($validatedData['revisorOtraArea'])) {
                 $roleId = Role::where('name', 'revisor_otra_area')->first()->id;
                 foreach ($validatedData['revisorOtraArea'] as $userId) {
                     $contract->users()->attach($userId, ['role_id' => $roleId]);
                 }
             }
-    
+
             if (isset($validatedData['adminDeTerreno'])) {
                 $roleId = Role::where('name', 'admin_terreno')->first()->id;
                 foreach ($validatedData['adminDeTerreno'] as $userId) {
@@ -136,7 +147,11 @@ class ContractController extends Controller
                     $contract->users()->attach($userId, ['role_id' => $roleId]);
                 }
             }
-    //* Personal
+
+            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+            $out->writeln("Hello from dd" . $validatedData['start_date']);
+
+            //* Personal
             $personalSheet = DailySheet::create([
                 'name' => 'Personal',
                 'step' => '1',
@@ -227,9 +242,9 @@ class ContractController extends Controller
                 'daily_sheet_id' => $personalSheet->id,
             ]);
 
-    //* Fin Personal            
+            //* Fin Personal            
 
-    //* Maquinarias
+            //* Maquinarias
 
             $maquinariaSheet = DailySheet::create([
                 'name' => 'Maquinarias',
@@ -320,99 +335,126 @@ class ContractController extends Controller
                 'step' => '11',
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
-    //* Fin Maquinarias
+            //* Fin Maquinarias
 
-//* Interferencias   
-    $interferenciasSheet = DailySheet::create([
-        'name' => 'Interferencias',
-        'step' => '3',
-        'contract_id' => $contract->id,
-    ]);
+            //* Interferencias   
+            $interferenciasSheet = DailySheet::create([
+                'name' => 'Interferencias',
+                'step' => '3',
+                'contract_id' => $contract->id,
+            ]);
 
-    Field::create([
-        'name' => 'Categoría',
-        'description' => 'Categoria de la interferencia',
-        'field_type' => 'list',
-        'step' => '1',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Subcategoría',
-        'description' => 'Subcategoría de la interferencia',
-        'field_type' => 'list',
-        'step' => '2',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Responsable',
-        'description' => 'Responsable de la interferencia (EECC, Codelco, Otro)',
-        'field_type' => 'list',
-        'step' => '3',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Hora Inicio',
-        'description' => 'Hora de inicio de la interferencia',
-        'field_type' => 'hour',
-        'step' => '4',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Hora Fin',
-        'description' => 'Hora de fin de la interferencia',
-        'field_type' => 'hour',
-        'step' => '5',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Cantidad Personal Involucrado',
-        'description' => 'Cantidad de personal involucrado en la interferencia',
-        'field_type' => 'integer',
-        'step' => '6',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'HH Totales',
-        'description' => 'HH totales de la interferencia',
-        'field_type' => 'integer',
-        'step' => '7',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'HM Totales',
-        'description' => 'Horas maquinas totales de la interferencia',
-        'field_type' => 'integer',
-        'step' => '8',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Descripción',
-        'description' => 'Descripción de la interferencia',
-        'field_type' => 'text',
-        'step' => '9',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Comentarios EECC',
-        'description' => 'Comentarios de la Empresa colaboradora',
-        'field_type' => 'integer',
-        'step' => '10',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    Field::create([
-        'name' => 'Comentarios Codelco',
-        'description' => 'Comentarios del equipo de Codelco',
-        'field_type' => 'integer',
-        'step' => '11',
-        'daily_sheet_id' => $interferenciasSheet->id,
-    ]);
-    
-//* Fin Interferencias
+            Field::create([
+                'name' => 'Categoría',
+                'description' => 'Categoria de la interferencia',
+                'field_type' => 'list',
+                'step' => '1',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Subcategoría',
+                'description' => 'Subcategoría de la interferencia',
+                'field_type' => 'list',
+                'step' => '2',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Responsable',
+                'description' => 'Responsable de la interferencia (EECC, Codelco, Otro)',
+                'field_type' => 'list',
+                'step' => '3',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Hora Inicio',
+                'description' => 'Hora de inicio de la interferencia',
+                'field_type' => 'hour',
+                'step' => '4',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Hora Fin',
+                'description' => 'Hora de fin de la interferencia',
+                'field_type' => 'hour',
+                'step' => '5',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Cantidad Personal Involucrado',
+                'description' => 'Cantidad de personal involucrado en la interferencia',
+                'field_type' => 'integer',
+                'step' => '6',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'HH Totales',
+                'description' => 'HH totales de la interferencia',
+                'field_type' => 'integer',
+                'step' => '7',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'HM Totales',
+                'description' => 'Horas maquinas totales de la interferencia',
+                'field_type' => 'integer',
+                'step' => '8',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Descripción',
+                'description' => 'Descripción de la interferencia',
+                'field_type' => 'text',
+                'step' => '9',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Comentarios EECC',
+                'description' => 'Comentarios de la Empresa colaboradora',
+                'field_type' => 'integer',
+                'step' => '10',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+            Field::create([
+                'name' => 'Comentarios Codelco',
+                'description' => 'Comentarios del equipo de Codelco',
+                'field_type' => 'integer',
+                'step' => '11',
+                'daily_sheet_id' => $interferenciasSheet->id,
+            ]);
+
+            //* Fin Interferencias
+
+            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+            $out->writeln("Hello from 11" . $validatedData['start_date']);
+
+            $start = Carbon::createFromFormat('Y-m-d', $validatedData['start_date']);
+            $end = Carbon::createFromFormat('Y-m-d', $validatedData['end_date']);
+
+            $out->writeln("Hello from 22" . $start);
+
+            while ($start->lte($end)) {
+
+                $out->writeln("Hello from dddd" .$start->format('Y-m-d'));
 
 
+                try {
+                    $dailys = Dailys::create([
+                        'date' => $start->format('Y-m-d'),
+                        'state_id' => 1,
+                        'contract_id' => $contract->id,
+                    ]);
+                } catch (\Exception $e) {
+                    // Manejar el error, por ejemplo, registrarlo o enviar una respuesta de error.
+                    $out->writeln("error" . $e->getMessage());
+                    // Opcional: enviar una respuesta o redirigir al usuario a otra página.
+                    return response()->json(['message' => 'Error al crear el contrato', 'error' => $e->getMessage()], 500);
+                }
+
+                $start->addDay();
+            }
 
             DB::commit();
-    
+
             return response()->json(['message' => 'Contrato creado con éxito'], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -424,39 +466,39 @@ class ContractController extends Controller
      */
     public function show($id)
     {
-    $contract = Contract::with([
-        'company:id,name,rut_number,rut_verifier',
-        'users' => function ($query) {
-            $query->withPivot('role_id')
-                ->leftJoin('roles', 'contract_user.role_id', '=', 'roles.id')
-                ->select('users.id', 'users.name', 'roles.name as role_name', 'contract_user.contract_id');
-        }
-    ])->findOrFail($id);
+        $contract = Contract::with([
+            'company:id,name,rut_number,rut_verifier',
+            'users' => function ($query) {
+                $query->withPivot('role_id')
+                    ->leftJoin('roles', 'contract_user.role_id', '=', 'roles.id')
+                    ->select('users.id', 'users.name', 'roles.name as role_name', 'contract_user.contract_id');
+            }
+        ])->findOrFail($id);
 
-    $formattedContract = [
-        'id' => $contract->id,
-        'nombre_contrato' => $contract->name_contract,
-        'NSAP' => $contract->NSAP,
-        'DEN' => $contract->DEN,
-        'proyecto' => $contract->project,
-        'API' => $contract->API,
-       'revisorPYCRequired' => (bool) $contract->is_revisor_pyc_required,
-       'revisorCCRequired' => (bool) $contract->is_revisor_cc_required,
-       'revisorOtraAreaRequired' => (bool) $contract->is_revisor_other_area_required,
-        'fecha_inicio' => $contract->start_date,
-        'fecha_fin' => $contract->end_date,
-        'empresa_contratista' => $contract->company->id,
-        'encargadoContratista' => $contract->users->where('role_name', 'encargado_contratista')->values(),
-        'adminTerreno' => $contract->users->where('role_name', 'admin_terreno')->values(),
-        'visualizador' => $contract->users->where('role_name', 'visualizador')->values(),
-        'revisorPYC' => $contract->users->where('role_name', 'revisor_pyc')->values(),
-        'revisorCC' => $contract->users->where('role_name', 'revisor_cc')->values(),
-        'revisorOtraArea' => $contract->users->where('role_name', 'revisor_otra_area')->values(),
-        'encargadoCodelco' => $contract->users->where('role_name', 'encargado_codelco')->values(),
-    ];
+        $formattedContract = [
+            'id' => $contract->id,
+            'nombre_contrato' => $contract->name_contract,
+            'NSAP' => $contract->NSAP,
+            'DEN' => $contract->DEN,
+            'proyecto' => $contract->project,
+            'API' => $contract->API,
+            'revisorPYCRequired' => (bool) $contract->is_revisor_pyc_required,
+            'revisorCCRequired' => (bool) $contract->is_revisor_cc_required,
+            'revisorOtraAreaRequired' => (bool) $contract->is_revisor_other_area_required,
+            'fecha_inicio' => $contract->start_date,
+            'fecha_fin' => $contract->end_date,
+            'empresa_contratista' => $contract->company->id,
+            'encargadoContratista' => $contract->users->where('role_name', 'encargado_contratista')->values(),
+            'adminTerreno' => $contract->users->where('role_name', 'admin_terreno')->values(),
+            'visualizador' => $contract->users->where('role_name', 'visualizador')->values(),
+            'revisorPYC' => $contract->users->where('role_name', 'revisor_pyc')->values(),
+            'revisorCC' => $contract->users->where('role_name', 'revisor_cc')->values(),
+            'revisorOtraArea' => $contract->users->where('role_name', 'revisor_otra_area')->values(),
+            'encargadoCodelco' => $contract->users->where('role_name', 'encargado_codelco')->values(),
+        ];
 
-    return response()->json($formattedContract, 200);
-}
+        return response()->json($formattedContract, 200);
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -473,7 +515,7 @@ class ContractController extends Controller
     {
         $validatedData = $request->validated();
         DB::beginTransaction();
-    
+
         try {
             $contract = Contract::findOrFail($id);
             $contract->update([
@@ -491,7 +533,7 @@ class ContractController extends Controller
                 'is_revisor_cc_required' => $validatedData['revisorCCRequired'] ?? false,
                 'is_revisor_other_area_required' => $validatedData['revisorOtraAreaRequired'] ?? false,
             ]);
-    
+
             $this->syncRoles($contract, 'revisor_pyc', $validatedData['revisorPYC'] ?? []);
             $this->syncRoles($contract, 'revisor_cc', $validatedData['revisorCC'] ?? []);
             $this->syncRoles($contract, 'revisor_otra_area', $validatedData['revisorOtraArea'] ?? []);
@@ -499,9 +541,9 @@ class ContractController extends Controller
             $this->syncRoles($contract, 'encargado_contratista', $validatedData['encargadoContratista'] ?? []);
             $this->syncRoles($contract, 'visualizador', $validatedData['visualizador'] ?? []);
             $this->syncRoles($contract, 'encargado_codelco', $validatedData['encargadoCodelco'] ?? []);
-    
+
             DB::commit();
-    
+
             return response()->json(['message' => 'Contrato actualizado con éxito'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -510,42 +552,41 @@ class ContractController extends Controller
     }
 
     public function getEstructure($id)
-{
-    try {
-        // Obtener el contrato y sus hojas diarias asociadas
-        $contract = Contract::findOrFail($id);
-        $dailySheets = $contract->dailySheets()->orderBy('step')->get();
+    {
+        try {
+            // Obtener el contrato y sus hojas diarias asociadas
+            $contract = Contract::findOrFail($id);
+            $dailySheets = $contract->dailySheets()->orderBy('step')->get();
 
-        $steps = [];
+            $steps = [];
 
-        foreach ($dailySheets as $sheet) {
-            $fields = $sheet->fields()->orderBy('step')->get();
+            foreach ($dailySheets as $sheet) {
+                $fields = $sheet->fields()->orderBy('step')->get();
 
-            $step = [
-                'idSheet' => $sheet->id,
-                'sheet' => $sheet->name,
-                'fields' => $fields,
-            ];
+                $step = [
+                    'idSheet' => $sheet->id,
+                    'sheet' => $sheet->name,
+                    'fields' => $fields,
+                ];
 
-            $steps[] = $step;
+                $steps[] = $step;
+            }
+
+            return response()->json([
+                'steps' => $steps,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al obtener estructura del contrato', 'message' => $e->getMessage()], 500);
         }
-
-        return response()->json([
-            'steps' => $steps,
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Error al obtener estructura del contrato', 'message' => $e->getMessage()], 500);
     }
-}
 
-    
-    
+
+
     private function syncRoles($contract, $roleName, $userIds)
     {
         $roleId = Role::where('name', $roleName)->first()->id;
         $contract->users()->wherePivot('role_id', $roleId)->detach();
-    
+
         foreach ($userIds as $userId) {
             $contract->users()->attach($userId, ['role_id' => $roleId]);
         }
@@ -559,7 +600,7 @@ class ContractController extends Controller
         try {
             $contract = Contract::findOrFail($id);
             $contract->delete();
-    
+
             return response()->json(['message' => 'Contrato eliminado exitosamente']);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al eliminar el contrato', 'error' => $e->getMessage()], 500);

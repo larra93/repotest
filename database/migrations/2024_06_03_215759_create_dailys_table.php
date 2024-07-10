@@ -15,9 +15,12 @@ return new class extends Migration
             $table->id();
             $table->datetime('date');
             $table->unsignedBigInteger('state_id'); 
+            $table->unsignedBigInteger('contract_id'); 
             $table->timestamps();
 
             $table->foreign('state_id')->references('id')->on('states')->onDelete('cascade');
+            $table->foreign('contract_id')->references('id')->on('contracts')->onDelete('cascade');
+
         });
     }
 
