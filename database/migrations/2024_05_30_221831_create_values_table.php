@@ -18,7 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('daily_sheet_id'); 
             $table->integer('row'); 
             $table->timestamps();
-
+            $table->unsignedBigInteger('daily_id');
+            
+            
+            $table->foreign('daily_id')->references('id')->on('dailys')->onDelete('cascade');
             $table->foreign('field_id')->references('id')->on('fields')->onDelete('cascade');
             $table->foreign('daily_sheet_id')->references('id')->on('daily_sheets')->onDelete('cascade');
         });

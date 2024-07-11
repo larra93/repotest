@@ -17,7 +17,7 @@ return new class extends Migration
             $table->integer('step')->nullable();
             $table->unsignedBigInteger('contract_id'); 
             $table->timestamps();
-
+            $table->boolean('vigente')->default(true);
             $table->foreign('contract_id')->references('id')->on('contracts')->onDelete('cascade');
         });
     }

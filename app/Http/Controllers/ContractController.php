@@ -537,7 +537,7 @@ class ContractController extends Controller
     public function getEstructure($id)
     {
         try {
-            // Obtener el contrato y sus hojas diarias asociadas
+            // Obtener el contrato y sus hojas diarias asociadas //AQUI HAY QUE AGREGAR QUE SOLO TE TRAIGA LAS HOJAS VIGENTES
             $contract = Contract::findOrFail($id);
             $dailySheets = $contract->dailySheets()->orderBy('step')->get();
 

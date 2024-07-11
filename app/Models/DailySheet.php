@@ -13,6 +13,7 @@ class DailySheet extends Model
         'name',
         'step',
         'contract_id',
+        'vigente'
       
     ];
 
