@@ -14,6 +14,8 @@ class Dailys extends Model
         'date',
         'state_id',
         'contract_id',
+        'revision',
+        'daily_sheet_id'
       
     ];
 

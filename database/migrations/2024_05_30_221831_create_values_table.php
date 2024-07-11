@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('field_id'); 
             $table->string('value'); 
-            $table->unsignedBigInteger('daily_sheet_id'); 
+            $table->unsignedBigInteger('daily_sheet_id'); //quizas podemos sacar este ya que si tenemos el daily_id ya tenemos tambein el daily_sheet_id
             $table->integer('row'); 
             $table->timestamps();
             $table->unsignedBigInteger('daily_id');
