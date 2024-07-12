@@ -12,14 +12,14 @@ class DailySheet extends Model
     protected $fillable = [
         'name',
         'step',
-        'contract_id',
-        'vigente'
+        'daily_structure_id',
+
       
     ];
 
-    public function contract()
+    public function DailyStructure()
     {
-        return $this->belongsTo(Contract::class);
+        return $this->belongsTo(DailyStructure::class);
     }
 
     public function fields()

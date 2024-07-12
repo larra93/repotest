@@ -51,6 +51,8 @@ Route::get('/getUsers', [UserController::class, 'getUsers']);
 Route::resource('/companies', CompanyController::class);
 
 Route::resource('/contracts', ContractController::class);
-Route::get('/contracts/{id}/dailySheet', [ContractController::class, 'getEstructure']);
+Route::get('/contracts/{id}/dailySheet', [ContractController::class, 'getStructureVigentes']);
+Route::get('/Dailys/{id}/dailyStructure', [ContractController::class, 'getEstructureDaily']);
+
 Route::resource('/Dailys', DailysController::class);
 

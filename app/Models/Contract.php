@@ -26,8 +26,8 @@ class Contract extends Model
         return $this->belongsTo(Company::class, 'id_company');
     }
 
-    public function dailySheets()
+    public function dailyStructure()
     {
-        return $this->hasMany(DailySheet::class, 'contract_id');
+        return $this->hasMany(DailyStructure::class, 'contract_id');
     }
 }

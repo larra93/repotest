@@ -16,13 +16,13 @@ return new class extends Migration
             $table->datetime('date');
             $table->unsignedBigInteger('state_id'); 
             $table->unsignedBigInteger('contract_id');
-            $table->unsignedBigInteger('daily_sheet_id');  
+            $table->unsignedBigInteger('daily_structure_id');  
             $table->integer('revision'); 
             $table->timestamps();
 
             $table->foreign('state_id')->references('id')->on('states')->onDelete('cascade');
             $table->foreign('contract_id')->references('id')->on('contracts')->onDelete('cascade');
-            $table->foreign('daily_sheet_id')->references('id')->on('daily_sheets')->onDelete('cascade');
+            $table->foreign('daily_structure_id')->references('id')->on('daily_structure')->onDelete('cascade');
 
 
         });

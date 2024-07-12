@@ -8,6 +8,7 @@ use App\Http\Requests\StoreContractRequest;
 use Spatie\Permission\Models\Role;
 use App\Models\Contract;
 use App\Models\DailySheet;
+use App\Models\DailyStructure;
 use App\Models\Dailys;
 use App\Models\Field;
 use Carbon\Carbon;
@@ -141,13 +142,26 @@ class ContractController extends Controller
             }
 
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-           // $out->writeln("Hello from dd" . $validatedData['start_date']);
+
+
+
+         //*Crear estructura de daily
+            try {
+                $dailyStructure = DailyStructure::create([
+                    'contract_id' => $contract->id,
+                    'vigente' => true,
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Error al crear la estructura diaria', 'message' => $e->getMessage()], 500);
+            }
+
+          //* Fin estructura de daily
 
         //* Personal
             $personalSheet = DailySheet::create([
                 'name' => 'Personal',
                 'step' => '1',
-                'contract_id' => $contract->id,
+                'daily_structure_id' => $dailyStructure->id,
             ]);
             Field::create([
                 'name' => 'RUT',
@@ -234,14 +248,16 @@ class ContractController extends Controller
                 'daily_sheet_id' => $personalSheet->id,
             ]);
 
-        //* Fin Personal            
+            //* Fin Personal            
 
-        //* Maquinarias
+
+
+            //* Maquinarias
 
             $maquinariaSheet = DailySheet::create([
                 'name' => 'Maquinarias',
                 'step' => '2',
-                'contract_id' => $contract->id,
+                'daily_structure_id' => $dailyStructure->id,
             ]);
             Field::create([
                 'name' => 'Patente o Identificación',
@@ -327,13 +343,13 @@ class ContractController extends Controller
                 'step' => '11',
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
-        //* Fin Maquinarias
+            //* Fin Maquinarias
 
-        //* Interferencias   
+            //* Interferencias   
             $interferenciasSheet = DailySheet::create([
                 'name' => 'Interferencias',
                 'step' => '3',
-                'contract_id' => $contract->id,
+                'daily_structure_id' => $dailyStructure->id,
             ]);
 
             Field::create([
@@ -413,29 +429,31 @@ class ContractController extends Controller
                 'step' => '11',
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
-        //* Fin Interferencias
+            //* Fin Interferencias
 
 
-        //*crear Dailys por cada fecha 
+            //*crear Dailys por cada fecha 
             $start = Carbon::createFromFormat('Y-m-d', $validatedData['start_date']);
             $end = Carbon::createFromFormat('Y-m-d', $validatedData['end_date']);
 
             while ($start->lte($end)) {
-              //  $out->writeln("Hello from dddd" .$start->format('Y-m-d'));
+                //  $out->writeln("Hello from dddd" .$start->format('Y-m-d'));
                 try {
                     $dailys = Dailys::create([
                         'date' => $start->format('Y-m-d'),
                         'state_id' => 1,
                         'contract_id' => $contract->id,
+                        'daily_structure_id' => $dailyStructure->id,
+                        'revision' => 0,
                     ]);
                 } catch (\Exception $e) {
-                    //$out->writeln("error" . $e->getMessage());
-                    return response()->json(['message' => 'Error al crear el contrato', 'error' => $e->getMessage()], 500);
+                    $out->writeln("error" . $e->getMessage());
+                    return response()->json(['message' => 'Error al los dailys de los contratos', 'error' => $e->getMessage()], 500);
                 }
                 $start->addDay();
             }
-        //*Fin Dailys por cada fecha 
-
+            //*Fin Dailys por cada fecha 
+            $out->writeln("structuresss" . $validatedData['start_date']);
             DB::commit();
 
             return response()->json(['message' => 'Contrato creado con éxito'], 201);
@@ -534,24 +552,76 @@ class ContractController extends Controller
         }
     }
 
-    public function getEstructure($id)
+
+
+
+
+    // Obtener las dailysheets vigentes y sus fields 
+
+    public function getStructureVigentes($id)
     {
         try {
-            // Obtener el contrato y sus hojas diarias asociadas //AQUI HAY QUE AGREGAR QUE SOLO TE TRAIGA LAS HOJAS VIGENTES
+            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+
             $contract = Contract::findOrFail($id);
-            $dailySheets = $contract->dailySheets()->orderBy('step')->get();
+            // $out->writeln("contract" . $contract);
+
+            $dailyStructure = $contract->dailyStructure()->where('vigente', true)->first();
+            // $out->writeln("dailyStructure" . $dailyStructure);
+
+            $dailySheets = $dailyStructure->dailySheets()->orderBy('step')->get();
+            //$out->writeln("dailysheets" . $dailySheets);
 
             $steps = [];
-
             foreach ($dailySheets as $sheet) {
                 $fields = $sheet->fields()->orderBy('step')->get();
-
                 $step = [
                     'idSheet' => $sheet->id,
                     'sheet' => $sheet->name,
                     'fields' => $fields,
                 ];
+                $steps[] = $step;
+            }
 
+            return response()->json([
+                'steps' => $steps,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al obtener estructura del contrato', 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
+    // obtener las dailysheets y sus fields de un Daily en particular
+    public function getEstructureDaily($id)
+    {
+        //el parametro id es el id de la daily
+        try {
+            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+
+            $Daily = Dailys::findOrFail($id);
+            $out->writeln("Daily" . $Daily);
+
+            try {
+                $dailyStructure = $Daily->dailyStructure()->first();
+            } catch (\Exception $e) {
+                $out->writeln("dailyStructure" . $e->getMessage());
+                \Log::error("Error al obtener la primera estructura diaria: " . $e->getMessage());
+                // Aquí puedes decidir cómo manejar el error, por ejemplo, devolver una respuesta o lanzar una excepción personalizada
+            }
+            $out->writeln("dailyStructure" . $dailyStructure);
+
+            $dailySheets = $dailyStructure->dailySheets()->orderBy('step')->get();
+            $out->writeln("dailysheets" . $dailySheets);
+
+            $steps = [];
+            foreach ($dailySheets as $sheet) {
+                $fields = $sheet->fields()->orderBy('step')->get();
+                $step = [
+                    'idSheet' => $sheet->id,
+                    'sheet' => $sheet->name,
+                    'fields' => $fields,
+                ];
                 $steps[] = $step;
             }
 

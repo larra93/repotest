@@ -15,9 +15,13 @@ class Dailys extends Model
         'state_id',
         'contract_id',
         'revision',
-        'daily_sheet_id'
+        'daily_structure_id',
       
     ];
 
-
+    public function dailyStructure()
+    {
+        return $this->belongsTo(DailyStructure::class, 'daily_structure_id');
+    }
+    
 }
