@@ -143,9 +143,7 @@ class ContractController extends Controller
 
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
 
-
-
-         //*Crear estructura de daily
+    //* Start crear estructura de daily
             try {
                 $dailyStructure = DailyStructure::create([
                     'contract_id' => $contract->id,
@@ -155,9 +153,9 @@ class ContractController extends Controller
                 return response()->json(['error' => 'Error al crear la estructura diaria', 'message' => $e->getMessage()], 500);
             }
 
-          //* Fin estructura de daily
+    //* Fin estructura de daily
 
-        //* Personal
+    //* Personal
             $personalSheet = DailySheet::create([
                 'name' => 'Personal',
                 'step' => '1',
@@ -248,11 +246,10 @@ class ContractController extends Controller
                 'daily_sheet_id' => $personalSheet->id,
             ]);
 
-            //* Fin Personal            
+    //* Fin Personal            
 
 
-
-            //* Maquinarias
+    //* Maquinarias
 
             $maquinariaSheet = DailySheet::create([
                 'name' => 'Maquinarias',
@@ -343,7 +340,7 @@ class ContractController extends Controller
                 'step' => '11',
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
-            //* Fin Maquinarias
+    //* Fin Maquinarias
 
             //* Interferencias   
             $interferenciasSheet = DailySheet::create([
@@ -557,7 +554,6 @@ class ContractController extends Controller
 
 
     // Obtener las dailysheets vigentes y sus fields 
-
     public function getStructureVigentes($id)
     {
         try {

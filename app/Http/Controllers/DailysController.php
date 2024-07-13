@@ -14,19 +14,19 @@ class DailysController extends Controller
      */
     public function index(Request $request)
     {
-       // $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+        // $out = new \Symfony\Component\Console\Output\ConsoleOutput();
         $perPage = $request->get('per_page', 5);
         $dailys = Dailys::join('states', 'dailys.state_id', '=', 'states.id')
-    ->select('dailys.*', 'states.name AS state_name')
-    ->paginate($perPage);
-//    $out->writeln($dailys );
+            ->select('dailys.*', 'states.name AS state_name')
+            ->paginate($perPage);
+        //    $out->writeln($dailys );
         return response()->json($dailys);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         //
     }

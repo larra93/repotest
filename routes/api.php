@@ -8,6 +8,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CompanyController; 
 use App\Http\Controllers\ContractController; 
 use App\Http\Controllers\DailysController; 
+use App\Http\Controllers\FieldController; 
+
 
 
 /*
@@ -53,6 +55,9 @@ Route::resource('/companies', CompanyController::class);
 Route::resource('/contracts', ContractController::class);
 Route::get('/contracts/{id}/dailySheet', [ContractController::class, 'getStructureVigentes']);
 Route::get('/Dailys/{id}/dailyStructure', [ContractController::class, 'getEstructureDaily']);
+
+Route::post('/fields/create/{id}', [FieldController::class, 'store']);
+Route::post('/fields/update/{id}', [FieldController::class, 'update']);
 
 Route::resource('/Dailys', DailysController::class);
 
