@@ -575,6 +575,7 @@ class ContractController extends Controller
                     'idSheet' => $sheet->id,
                     'sheet' => $sheet->name,
                     'fields' => $fields,
+                    'step' => $sheet->step,
                 ];
                 $steps[] = $step;
             }
