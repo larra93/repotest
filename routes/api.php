@@ -9,6 +9,8 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ContractController; 
 use App\Http\Controllers\DailysController; 
 use App\Http\Controllers\FieldController; 
+use App\Http\Controllers\DailyStructureController;
+
 
 
 
@@ -60,4 +62,6 @@ Route::post('/fields/create/{id}', [FieldController::class, 'store']);
 Route::post('/fields/update/{id}', [FieldController::class, 'update']);
 
 Route::resource('/Dailys', DailysController::class);
+
+Route::post('/dailyStructure/create/{id}', [DailyStructureController::class, 'store']);
 
