@@ -10,6 +10,7 @@ use App\Models\Contract;
 use App\Models\DailySheet;
 use App\Models\DailyStructure;
 use App\Models\Dailys;
+use App\Models\DropdownLists;
 use App\Models\Field;
 use Carbon\Carbon;
 use App\Http\Controllers\Log;
@@ -574,11 +575,18 @@ class ContractController extends Controller
                 $step = [
                     'idSheet' => $sheet->id,
                     'sheet' => $sheet->name,
-                    'fields' => $fields,
+                    'fields' => $fields->map(function ($field) {
+                        $dropdownLists = DropdownLists::where('field_id', $field->id)->get();
+                        $field->dropdown_lists = $dropdownLists;
+                        return $field;
+                    }),
                     'step' => $sheet->step,
                 ];
                 $steps[] = $step;
             }
+
+            $out->writeln("dailysheets" . $dailySheets);
+
 
             return response()->json([
                 'steps' => $steps,

@@ -93,7 +93,7 @@ class DailyStructureController extends Controller
             }
 
 
-            DB::commit(); // Confirmar la transacción
+            //DB::commit(); // Confirmar la transacción
             return response()->json(['message' => 'Estructura diaria creada y actualizada exitosamente'], 200);
         } catch (\Exception $e) {
             DB::rollBack(); // Revertir la transacción en caso de error

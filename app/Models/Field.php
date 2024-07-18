@@ -21,4 +21,9 @@ class Field extends Model
     {
         return $this->belongsTo(DailySheet::class);
     }
+
+    public function dropdown_lists()
+    {
+        return $this->hasMany(DropdownLists::class);
+    }
 }

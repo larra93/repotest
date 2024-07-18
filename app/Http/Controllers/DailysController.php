@@ -14,11 +14,15 @@ class DailysController extends Controller
      */
     public function index(Request $request)
     {
+        $contract_id = $request->get('contract_id');
         // $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-        $perPage = $request->get('per_page', 5);
+
+        $perPage = $request->get('per_page', 15);
         $dailys = Dailys::join('states', 'dailys.state_id', '=', 'states.id')
+            ->where('dailys.contract_id', $contract_id)
             ->select('dailys.*', 'states.name AS state_name')
             ->paginate($perPage);
+
         //    $out->writeln($dailys );
         return response()->json($dailys);
     }
