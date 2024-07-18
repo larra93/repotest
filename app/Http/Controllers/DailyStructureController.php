@@ -8,6 +8,8 @@ use App\Models\Field;
 use App\Models\DailyStructure;
 use App\Models\DailySheet;
 use App\Models\Dailys;
+use App\Models\DropdownLists;
+
 
 
 
@@ -36,8 +38,10 @@ class DailyStructureController extends Controller
     {
         DB::beginTransaction();
         $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-
+        $out->writeln("entroaca");
         try {
+
+      
             //modifico la dailystructure vigentes del contrato a 0
             $dailyStructures = DailyStructure::where('contract_id', $id)
                 ->where('vigente', 1)
@@ -71,7 +75,7 @@ class DailyStructureController extends Controller
                 ]);
 
                 foreach ($sheetitem['fields'] as $fielditem) {
-                    $out->writeln("entroaca");
+               
 
                     $field = Field::create([
                         'name' => $fielditem['name'],
@@ -80,6 +84,14 @@ class DailyStructureController extends Controller
                         'step' => $fielditem['step'],
                         'daily_sheet_id' => $newsheet->id
                     ]);
+
+                    foreach ($fielditem['dropdown_lists'] as $dropdownitem) {
+                        $dropdown = DropdownLists::create([
+                            'id' => $dropdownitem['id'],
+                            'value' => $dropdownitem['value'],
+                            'field_id' => $field->id
+                        ]);
+                    }
                 }
             }
             // cambiar la dailystructure de todos los dailys en estado a la espera contratista
@@ -92,8 +104,10 @@ class DailyStructureController extends Controller
                 $daily->save();
             }
 
+            $out->writeln("llegoaca" );
 
-            //DB::commit(); // Confirmar la transacción
+
+            DB::commit(); // Confirmar la transacción
             return response()->json(['message' => 'Estructura diaria creada y actualizada exitosamente'], 200);
         } catch (\Exception $e) {
             DB::rollBack(); // Revertir la transacción en caso de error
