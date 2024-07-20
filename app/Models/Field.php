@@ -26,4 +26,9 @@ class Field extends Model
     {
         return $this->hasMany(DropdownLists::class);
     }
+
+    public function values()
+    {
+        return $this->hasMany(Value::class, 'field_id');
+    }
 }

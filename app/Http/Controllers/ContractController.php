@@ -621,7 +621,7 @@ class ContractController extends Controller
 
             $steps = [];
             foreach ($dailySheets as $sheet) {
-                $fields = $sheet->fields()->orderBy('step')->get();
+                $fields = $sheet->fields()->with('values')->orderBy('step')->get();
                 $step = [
                     'idSheet' => $sheet->id,
                     'sheet' => $sheet->name,
