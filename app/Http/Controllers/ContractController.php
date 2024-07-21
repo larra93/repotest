@@ -551,9 +551,6 @@ class ContractController extends Controller
     }
 
 
-
-
-
     // Obtener las dailysheets vigentes y sus fields 
     public function getStructureVigentes($id)
     {
@@ -584,10 +581,7 @@ class ContractController extends Controller
                 ];
                 $steps[] = $step;
             }
-
-            $out->writeln("dailysheets" . $dailySheets);
-
-
+            //$out->writeln("dailysheets" . $dailySheets)
             return response()->json([
                 'steps' => $steps,
             ], 200);
@@ -605,7 +599,7 @@ class ContractController extends Controller
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
 
             $Daily = Dailys::findOrFail($id);
-            $out->writeln("Daily" . $Daily);
+          //  $out->writeln("Daily" . $Daily);
 
             try {
                 $dailyStructure = $Daily->dailyStructure()->first();
@@ -614,14 +608,22 @@ class ContractController extends Controller
                 \Log::error("Error al obtener la primera estructura diaria: " . $e->getMessage());
                 // Aquí puedes decidir cómo manejar el error, por ejemplo, devolver una respuesta o lanzar una excepción personalizada
             }
-            $out->writeln("dailyStructure" . $dailyStructure);
+          //  $out->writeln("dailyStructure" . $dailyStructure);
 
             $dailySheets = $dailyStructure->dailySheets()->orderBy('step')->get();
-            $out->writeln("dailysheets" . $dailySheets);
 
             $steps = [];
             foreach ($dailySheets as $sheet) {
                 $fields = $sheet->fields()->with('values')->orderBy('step')->get();
+
+                $fields =  $fields->map(function ($field) {
+                    $dropdownLists = DropdownLists::where('field_id', $field->id)->get();
+                    $field->dropdown_lists = $dropdownLists;
+                    return $field;});
+              
+                $out->writeln("fields" . $fields);
+
+
                 $step = [
                     'idSheet' => $sheet->id,
                     'sheet' => $sheet->name,
