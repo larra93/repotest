@@ -14,6 +14,7 @@ class Field extends Model
         'description',
         'field_type',
         'step',
+        'required',
         'daily_sheet_id',
     ];
 

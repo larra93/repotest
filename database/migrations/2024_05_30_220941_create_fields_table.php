@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description')->nullable(); 
             $table->string('field_type');
             $table->integer('step')->nullable();
+            $table->string('required');
             $table->unsignedBigInteger('daily_sheet_id'); 
             $table->timestamps();
 

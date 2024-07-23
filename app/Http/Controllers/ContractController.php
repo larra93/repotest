@@ -167,6 +167,7 @@ class ContractController extends Controller
                 'description' => 'Rut del trabajador',
                 'field_type' => 'text',
                 'step' => '1',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -174,6 +175,7 @@ class ContractController extends Controller
                 'description' => 'Género del trabajador',
                 'field_type' => 'list',
                 'step' => '3',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -181,6 +183,7 @@ class ContractController extends Controller
                 'description' => 'Cargo del trabajador',
                 'field_type' => 'list',
                 'step' => '4    ',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -188,6 +191,7 @@ class ContractController extends Controller
                 'description' => 'Categoría del trabajador (Directo, Indirecto, etc)',
                 'field_type' => 'list',
                 'step' => '5',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -195,6 +199,7 @@ class ContractController extends Controller
                 'description' => 'Cuadrilla o Grupo del trabajador',
                 'field_type' => 'list',
                 'step' => '6',
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -202,6 +207,7 @@ class ContractController extends Controller
                 'description' => 'Jornada del trabajador (10x5, 5x2, etc)',
                 'field_type' => 'list',
                 'step' => '7',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -209,6 +215,7 @@ class ContractController extends Controller
                 'description' => 'Turno del trabajador (Diurno, nocturno)',
                 'field_type' => 'list',
                 'step' => '8',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -216,6 +223,7 @@ class ContractController extends Controller
                 'description' => 'Estado del trabajador (Trabajando, Licencia, etc)',
                 'field_type' => 'list',
                 'step' => '9',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -223,6 +231,7 @@ class ContractController extends Controller
                 'description' => 'Área de trabajo donde se desempeñó el trabajador',
                 'field_type' => 'list',
                 'step' => '10',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
@@ -230,20 +239,23 @@ class ContractController extends Controller
                 'description' => 'HH Trabajadas por el trabajador',
                 'field_type' => 'integer',
                 'step' => '11',
+                'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
                 'name' => 'Comentarios EECC',
                 'description' => 'Comentarios de la Empresa colaboradora',
-                'field_type' => 'integer',
+                'field_type' => 'text',
                 'step' => '12',
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             Field::create([
                 'name' => 'Comentarios Codelco',
                 'description' => 'Comentarios del equipo de Codelco',
-                'field_type' => 'integer',
+                'field_type' => 'text',
                 'step' => '13',
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
 
@@ -262,6 +274,7 @@ class ContractController extends Controller
                 'description' => 'Patente o Identificación de la maquinaria',
                 'field_type' => 'text',
                 'step' => '1',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -269,6 +282,7 @@ class ContractController extends Controller
                 'description' => 'Tipo de equipo ',
                 'field_type' => 'list',
                 'step' => '2',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -276,6 +290,7 @@ class ContractController extends Controller
                 'description' => 'Modelo de equipo',
                 'field_type' => 'text',
                 'step' => '3',
+                'required' => "No",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -283,6 +298,7 @@ class ContractController extends Controller
                 'description' => 'Turno de la maquinaria (Diurno, Nocturno)',
                 'field_type' => 'list',
                 'step' => '4',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -290,6 +306,7 @@ class ContractController extends Controller
                 'description' => 'Estuvo el operador presente de la maquinaria',
                 'field_type' => 'list',
                 'step' => '5',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -297,6 +314,7 @@ class ContractController extends Controller
                 'description' => 'Área de trabajo donde se desempeñó la maquinaria',
                 'field_type' => 'list',
                 'step' => '6',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -304,6 +322,7 @@ class ContractController extends Controller
                 'description' => 'Horas en que el equipo se encuentra entregada a su(s) operador(es), en condiciones óptimas y cumpliendo su tarea asignada.',
                 'field_type' => 'integer',
                 'step' => '7',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -311,6 +330,7 @@ class ContractController extends Controller
                 'description' => 'Horas en que el equipo, estando disponible, no es operado.',
                 'field_type' => 'integer',
                 'step' => '8',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -318,13 +338,15 @@ class ContractController extends Controller
                 'description' => 'Horas en que el equipo estuvo en una mantención programada',
                 'field_type' => 'integer',
                 'step' => '8',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
                 'name' => 'Horas Equipo en Panne',
                 'description' => 'Horas en el que el equipo estuvo con falla o en panne.',
-                'field_type' => 'list',
+                'field_type' => 'integer',
                 'step' => '9',
+                'required' => "Si",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -332,6 +354,7 @@ class ContractController extends Controller
                 'description' => 'Comentarios de la Empresa colaboradora',
                 'field_type' => 'text',
                 'step' => '10',
+                'required' => "No",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
             Field::create([
@@ -339,6 +362,7 @@ class ContractController extends Controller
                 'description' => 'Comentarios del equipo de Codelco',
                 'field_type' => 'text',
                 'step' => '11',
+                'required' => "No",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
     //* Fin Maquinarias
@@ -355,13 +379,7 @@ class ContractController extends Controller
                 'description' => 'Categoria de la interferencia',
                 'field_type' => 'list',
                 'step' => '1',
-                'daily_sheet_id' => $interferenciasSheet->id,
-            ]);
-            Field::create([
-                'name' => 'Subcategoría',
-                'description' => 'Subcategoría de la interferencia',
-                'field_type' => 'list',
-                'step' => '2',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
@@ -369,6 +387,7 @@ class ContractController extends Controller
                 'description' => 'Responsable de la interferencia (EECC, Codelco, Otro)',
                 'field_type' => 'list',
                 'step' => '3',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
@@ -376,6 +395,7 @@ class ContractController extends Controller
                 'description' => 'Hora de inicio de la interferencia',
                 'field_type' => 'hour',
                 'step' => '4',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
@@ -383,6 +403,7 @@ class ContractController extends Controller
                 'description' => 'Hora de fin de la interferencia',
                 'field_type' => 'hour',
                 'step' => '5',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
@@ -390,6 +411,7 @@ class ContractController extends Controller
                 'description' => 'Cantidad de personal involucrado en la interferencia',
                 'field_type' => 'integer',
                 'step' => '6',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
@@ -397,6 +419,7 @@ class ContractController extends Controller
                 'description' => 'HH totales de la interferencia',
                 'field_type' => 'integer',
                 'step' => '7',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
@@ -404,6 +427,7 @@ class ContractController extends Controller
                 'description' => 'Horas maquinas totales de la interferencia',
                 'field_type' => 'integer',
                 'step' => '8',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
@@ -411,20 +435,23 @@ class ContractController extends Controller
                 'description' => 'Descripción de la interferencia',
                 'field_type' => 'text',
                 'step' => '9',
+                'required' => "Si",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
                 'name' => 'Comentarios EECC',
                 'description' => 'Comentarios de la Empresa colaboradora',
-                'field_type' => 'integer',
+                'field_type' => 'text',
                 'step' => '10',
+                'required' => "No",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             Field::create([
                 'name' => 'Comentarios Codelco',
                 'description' => 'Comentarios del equipo de Codelco',
-                'field_type' => 'integer',
+                'field_type' => 'text',
                 'step' => '11',
+                'required' => "No",
                 'daily_sheet_id' => $interferenciasSheet->id,
             ]);
             //* Fin Interferencias

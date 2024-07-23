@@ -36,6 +36,6 @@ return new class extends Migration
         Schema::table('dailys', function (Blueprint $table) {
             $table->dropForeign(['state_id']);
         });
-        Schema::dropIfExists('daily');
+        Schema::dropIfExists('dailys');
     }
 };
