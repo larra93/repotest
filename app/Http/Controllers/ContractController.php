@@ -166,23 +166,23 @@ class ContractController extends Controller
                 'description' => 'Género del trabajador',
                 'field_type' => 'list',
                 'step' => '3',
-                'required' => "Si",
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             DropdownLists::create([
                 'field_id' => $generoField->id,
-                'value' => ' M',
+                'value' => 'M',
             ]);
             DropdownLists::create([
                 'field_id' => $generoField->id,
-                'value' => ' F',
+                'value' => 'F',
             ]);
             Field::create([
                 'name' => 'Cargo',
                 'description' => 'Cargo del trabajador',
                 'field_type' => 'list',
                 'step' => '4    ',
-                'required' => "Si",
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             $categoriaField=  Field::create([
@@ -190,24 +190,24 @@ class ContractController extends Controller
                 'description' => 'Categoría del trabajador (Directo, Indirecto, etc)',
                 'field_type' => 'list',
                 'step' => '5',
-                'required' => "Si",
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             DropdownLists::create([
                 'field_id' => $categoriaField->id,
-                'value' => ' Directo',
+                'value' => 'Directo',
             ]);
             DropdownLists::create([
                 'field_id' => $categoriaField->id,
-                'value' => ' Indirecto',
+                'value' => 'Indirecto',
             ]);
             DropdownLists::create([
                 'field_id' => $categoriaField->id,
-                'value' => ' Directo Subcontrato',
+                'value' => 'Directo Subcontrato',
             ]);
             DropdownLists::create([
                 'field_id' => $categoriaField->id,
-                'value' => ' Indirecto Subcontrato',
+                'value' => 'Indirecto Subcontrato',
             ]);
             Field::create([
                 'name' => 'Cuadrilla o Grupo',
@@ -222,64 +222,64 @@ class ContractController extends Controller
                 'description' => 'Jornada del trabajador (10x5, 5x2, etc)',
                 'field_type' => 'list',
                 'step' => '7',
-                'required' => "Si",
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 10x10',
+                'value' => '10x10',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 10x5',
+                'value' => '10x5',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 5x2',
+                'value' => '5x2',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 4x3',
+                'value' => '4x3',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 7x7',
+                'value' => '7x7',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 6x1',
+                'value' => '6x1',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 14x14',
+                'value' => '14x14',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 8x6',
+                'value' => '8x6',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 11x9',
+                'value' => '11x9',
             ]);
             DropdownLists::create([
                 'field_id' => $jornadaField->id,
-                'value' => ' 9x5',
+                'value' => '9x5',
             ]);
             $turnoField = Field::create([
                 'name' => 'Turno',
                 'description' => 'Turno del trabajador (Diurno, nocturno)',
                 'field_type' => 'list',
                 'step' => '8',
-                'required' => "Si",
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
             DropdownLists::create([
                 'field_id' => $turnoField->id,
-                'value' => ' Diurno',
+                'value' => 'Diurno',
             ]);
             DropdownLists::create([
                 'field_id' => $turnoField->id,
-                'value' => ' Nocturno',
+                'value' => 'Nocturno',
             ]);
             $EstadoPField = Field::create([
                 'name' => 'Estado Personal',
@@ -291,15 +291,15 @@ class ContractController extends Controller
             ]);
             DropdownLists::create([
                 'field_id' => $EstadoPField->id,
-                'value' => ' Trabajando',
+                'value' => 'Trabajando',
             ]);
             DropdownLists::create([
                 'field_id' => $EstadoPField->id,
-                'value' => ' Descansando',
+                'value' => 'Descansando',
             ]);
             DropdownLists::create([
                 'field_id' => $EstadoPField->id,
-                'value' => ' Falla (Inasistencia)',
+                'value' => 'Falla (Inasistencia)',
             ]);
             DropdownLists::create([
                 'field_id' => $EstadoPField->id,
@@ -326,17 +326,70 @@ class ContractController extends Controller
                 'description' => 'Área de trabajo donde se desempeñó el trabajador',
                 'field_type' => 'list',
                 'step' => '10',
-                'required' => "Si",
+                'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
-            Field::create([
+            $hhtrabajadasField = Field::create([
                 'name' => 'HH Trabajadas',
                 'description' => 'HH Trabajadas por el trabajador',
-                'field_type' => 'integer',
+                'field_type' => 'list',
                 'step' => '11',
                 'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '0',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '1',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '2',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '3',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '4',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '5',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '6',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '7',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '8',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '9',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '10',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '11',
+            ]);
+            DropdownLists::create([
+                'field_id' => $hhtrabajadasField->id,
+                'value' => '12',
+            ]);
+  
             Field::create([
                 'name' => 'Comentarios EECC',
                 'description' => 'Comentarios de la Empresa colaboradora',
@@ -787,14 +840,15 @@ class ContractController extends Controller
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
 
             $Daily = Dailys::findOrFail($id);
-          //  $out->writeln("Daily" . $Daily);
+            $out->writeln("Daily" . $Daily);
 
             try {
                 $dailyStructure = $Daily->dailyStructure()->first();
+                $out->writeln("dailyStructure" . $dailyStructure);
+
             } catch (\Exception $e) {
                 $out->writeln("dailyStructure" . $e->getMessage());
                 \Log::error("Error al obtener la primera estructura diaria: " . $e->getMessage());
-                // Aquí puedes decidir cómo manejar el error, por ejemplo, devolver una respuesta o lanzar una excepción personalizada
             }
           //  $out->writeln("dailyStructure" . $dailyStructure);
 
@@ -802,8 +856,9 @@ class ContractController extends Controller
 
             $steps = [];
             foreach ($dailySheets as $sheet) {
-                $fields = $sheet->fields()->with('values')->orderBy('step')->get();
-
+                $fields = $sheet->fields()->with(['values' => function ($query) use ($id) {
+                    $query->where('daily_id', $id);
+                }])->orderBy('step')->get();
                 $fields =  $fields->map(function ($field) {
                     $dropdownLists = DropdownLists::where('field_id', $field->id)->get();
                     $field->dropdown_lists = $dropdownLists;

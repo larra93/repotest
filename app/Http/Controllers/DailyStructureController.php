@@ -34,27 +34,23 @@ class DailyStructureController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, string $id, bool $iguales)
+    public function store(Request $request, string $id, string $iguales)
     {
         DB::beginTransaction();
         $out = new \Symfony\Component\Console\Output\ConsoleOutput();
         $out->writeln($iguales);
         try {
-
             // Obtiene todos los datos del cuerpo de la solicitud
             $data = $request->json()->all();
-
             //obtengo la ultima estructura vigente
             $dailyStructuresVigentes_old = DailyStructure::where('contract_id', $id)
                 ->where('vigente', 1)
                 ->get();
 
-
             // Guardar el resultado en una variable boolean
             $allFieldsMatch = $iguales;
            // $out->writeln( $allFieldsMatch);
-
-            if ($allFieldsMatch) {
+            if ($allFieldsMatch == "si") {
                 // si las fields son iguales, solo actualizo los dropdowns
                 foreach ($data as $sheetitem) {
                     foreach ($sheetitem['fields'] as $fielditem) {
@@ -77,9 +73,7 @@ class DailyStructureController extends Controller
                             }
                         }
                     }
-
                 }
-
 
             } else {
                 // si las fields no son iguales, creo una nueva estructura diaria y todo nuevo
@@ -87,7 +81,7 @@ class DailyStructureController extends Controller
                     $dailyStructure->vigente = 0;
                     $dailyStructure->save();
                 }
-
+              
                 // Crear y guardar la nueva DailyStructure
                 $newDailyStructure = DailyStructure::create([
                     'contract_id' => $id,
@@ -95,31 +89,40 @@ class DailyStructureController extends Controller
                 ]);
 
                 foreach ($data as $sheetitem) {
-
                     // Verificar que los fields de la hoja sean un array
                     if (!is_array($sheetitem['fields'])) {
                         return response()->json(['error' => 'Invalid data format. "fields" must be an array.'], 400);
                     }
-
+              
                     $newsheet = DailySheet::create([
                         'name' => $sheetitem['sheet'],
                         'step' => $sheetitem['step'],
                         'daily_structure_id' => $newDailyStructure->id,
                     ]);
-
+                
                     // Crear y guardar los fields
                     foreach ($sheetitem['fields'] as $fielditem) {
-
-
-                        $field = Field::create([
-                            'name' => $fielditem['name'],
-                            'description' => $fielditem['description'],
-                            'field_type' => $fielditem['field_type'],
-                            'step' => $fielditem['step'],
-                            'daily_sheet_id' => $newsheet->id
-                        ]);
+                              
+    
+                        try {
+                            $field = Field::create([
+                                'name' => $fielditem['name'],
+                                'description' => $fielditem['description'],
+                                'field_type' => $fielditem['field_type'],
+                                'step' => $fielditem['step'],
+                                'required' => $fielditem['required'],
+                                'daily_sheet_id' => $newsheet->id
+                            ]);
+                        } catch (\Exception $e) {
+                            DB::rollBack(); // Revertir la transacción en caso de error
+                            $out->writeln($e->getMessage());
+                            return response()->json(['error' => 'Error al guardar el field', 'message' => $e->getMessage()], 500);
+                        }
                         //por cada field creo los dropdowns
+                        $out->writeln('llegoaca');
+                    
                         foreach ($fielditem['dropdown_lists'] as $dropdownitem) {
+                      
                             $dropdown = DropdownLists::create([
                                 'id' => $dropdownitem['id'],
                                 'value' => $dropdownitem['value'],
@@ -135,40 +138,40 @@ class DailyStructureController extends Controller
                                 });
                             })
                             ->get();
-
-
+                     
 
                         // Eliminar los dropdowns de los fields encontrados
                         foreach ($fieldsWithSameName as $fieldWithSameName) {
                             $fieldWithSameName->dropdown_lists()->delete();
                         }
-
-
-                        // Setear los dropdowns de los fields encontrados
-                        foreach ($fieldsWithSameName as $fieldWithSameName) {
-                            foreach ($fielditem['dropdown_lists'] as $dropdownitem) {
-                                $dropdown = DropdownLists::create([
-                                    'id' => $dropdownitem['id'],
-                                    'value' => $dropdownitem['value'],
-                                    'field_id' => $fieldWithSameName->id
-                                ]);
+                        try {
+                            // Setear los dropdowns de los fields encontrados
+                            foreach ($fieldsWithSameName as $fieldWithSameName) {
+                                foreach ($fielditem['dropdown_lists'] as $dropdownitem) {
+                                    $dropdown = DropdownLists::create([
+                                        'id' => $dropdownitem['id'],
+                                        'value' => $dropdownitem['value'],
+                                        'field_id' => $fieldWithSameName->id
+                                    ]);
+                                }
                             }
+                        } catch (\Exception $e) {
+                            DB::rollBack(); // Revertir la transacción en caso de error
+                            $out->writeln($e->getMessage());
+                            return response()->json(['error' => 'Error al guardar los dropdowns', 'message' => $e->getMessage()], 500);
                         }
-
+                     
                     }
                 }
                 // cambiar la dailystructure de todos los dailys con fecha mayor a la actual
                 $dailys = Dailys::where('contract_id', $id)
                     ->where('date', '>', date('Y-m-d'))
                     ->get();
-
                 foreach ($dailys as $daily) {
                     $daily->daily_structure_id = $newDailyStructure->id;
                     $daily->save();
                 }
-
             }
-
 
             DB::commit(); // Confirmar la transacción
             return response()->json(['message' => 'Estructura diaria creada y actualizada exitosamente'], 200);
