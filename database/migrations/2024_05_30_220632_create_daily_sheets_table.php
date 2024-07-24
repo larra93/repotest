@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('daily_sheets', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('contract_id'); 
+            $table->integer('step')->nullable();
+            $table->unsignedBigInteger('daily_structure_id'); 
             $table->timestamps();
-
-            $table->foreign('contract_id')->references('id')->on('contracts')->onDelete('cascade');
+            $table->foreign('daily_structure_id')->references('id')->on('daily_structure')->onDelete('cascade');
         });
     }
 
@@ -27,7 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('daily_sheets', function (Blueprint $table) {
-            $table->dropForeign(['contract_id']);
+            $table->dropForeign(['daily_structure_id']);
         });
         Schema::dropIfExists('daily_sheets');
     }
