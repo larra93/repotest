@@ -15,9 +15,16 @@ return new class extends Migration
             $table->id();
             $table->datetime('date');
             $table->unsignedBigInteger('state_id'); 
+            $table->unsignedBigInteger('contract_id');
+            $table->unsignedBigInteger('daily_structure_id');  
+            $table->integer('revision'); 
             $table->timestamps();
 
             $table->foreign('state_id')->references('id')->on('states')->onDelete('cascade');
+            $table->foreign('contract_id')->references('id')->on('contracts')->onDelete('cascade');
+            $table->foreign('daily_structure_id')->references('id')->on('daily_structure')->onDelete('cascade');
+
+
         });
     }
 
@@ -29,6 +36,6 @@ return new class extends Migration
         Schema::table('dailys', function (Blueprint $table) {
             $table->dropForeign(['state_id']);
         });
-        Schema::dropIfExists('daily');
+        Schema::dropIfExists('dailys');
     }
 };
