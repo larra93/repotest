@@ -67,4 +67,5 @@ Route::resource('/Dailys', DailysController::class);
 Route::post('/dailyStructure/create/{id}/{iguales}', [DailyStructureController::class, 'store']);
 Route::resource('/values', ValueController::class);
 Route::put('/updateValues', [ValueController::class, 'updateValues']);
+Route::delete('/values', [ValueController::class, 'deleteValues']);
 

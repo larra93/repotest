@@ -116,20 +116,36 @@ class ValueController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        try {
-            $value = Value::find($id);
+    // public function destroy(string $id)
+    // {
+    //     try {
+    //         $value = Value::find($id);
             
-            if ($value) {
-                $value->delete();
-                return response()->json(['message' => 'Fila eliminada correctamente'], 200);
-            } else {
-                return response()->json(['error' => 'Error fila'], 404);
-            }
-        } catch (\Exception $e) {
-            Log::error('Error al borrar fila: ' . $e->getMessage());
-            return response()->json(['error' => 'Error deleting value'], 500);
+    //         if ($value) {
+    //             $value->delete();
+    //             return response()->json(['message' => 'Fila eliminada correctamente'], 200);
+    //         } else {
+    //             return response()->json(['error' => 'Error fila'], 404);
+    //         }
+    //     } catch (\Exception $e) {
+    //         Log::error('Error al borrar fila: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Error deleting value'], 500);
+    //     }
+    // }
+
+    public function deleteValues(Request $request)
+    {
+        $row = $request->input('row');
+        $daily_id = $request->input('daily_id');
+
+        $deletedRows = Value::where('row', $row)
+            ->where('daily_id', $daily_id)
+            ->delete();
+
+        if ($deletedRows) {
+            return response()->json(['message' => 'Fila eliminada exitosamente'], 200);
+        } else {
+            return response()->json(['message' => 'Error'], 404);
         }
     }
 }
