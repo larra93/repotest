@@ -137,9 +137,11 @@ class ValueController extends Controller
     {
         $row = $request->input('row');
         $daily_id = $request->input('daily_id');
+        $daily_sheet_id = $request->input('daily_sheet_id');
 
         $deletedRows = Value::where('row', $row)
             ->where('daily_id', $daily_id)
+            ->where('daily_sheet_id', $daily_sheet_id)
             ->delete();
 
         if ($deletedRows) {
