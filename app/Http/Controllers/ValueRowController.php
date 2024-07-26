@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Value;
+use App\Models\ValueRow;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class ValueController extends Controller
+class ValueRowController extends Controller
 {
     /**
      * Display a listing of the resource.

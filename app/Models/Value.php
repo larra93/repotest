@@ -29,6 +29,6 @@ class Value extends Model
 
     public function daily()
     {
-        return $this->belongsTo(Daily::class);
+        return $this->belongsTo(Dailys::class);
     }
 }
