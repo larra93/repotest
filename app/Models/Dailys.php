@@ -23,5 +23,10 @@ class Dailys extends Model
     {
         return $this->belongsTo(DailyStructure::class, 'daily_structure_id');
     }
+
+    public function valuesRows()
+    {
+        return $this->hasMany(ValuesRow::class);
+    }
     
 }

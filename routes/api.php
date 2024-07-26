@@ -58,6 +58,8 @@ Route::resource('/companies', CompanyController::class);
 Route::resource('/contracts', ContractController::class);
 Route::get('/contracts/{id}/dailySheet', [ContractController::class, 'getStructureVigentes']);
 Route::get('/Dailys/{id}/dailyStructure', [ContractController::class, 'getEstructureDaily']);
+Route::get('/Dailys/{id}/dailyStructurev2', [ContractController::class, 'getEstructureDailyv2']);
+
 
 Route::post('/fields/create/{id}', [FieldController::class, 'store']);
 Route::post('/fields/update/{id}', [FieldController::class, 'update']);

@@ -11,6 +11,7 @@ use App\Models\DailySheet;
 use App\Models\DailyStructure;
 use App\Models\Dailys;
 use App\Models\DropdownLists;
+use App\Models\ValuesRow;
 use App\Models\Field;
 use Carbon\Carbon;
 use App\Http\Controllers\Log;
@@ -822,6 +823,7 @@ class ContractController extends Controller
                 ];
                 $steps[] = $step;
             }
+            
             //$out->writeln("dailysheets" . $dailySheets)
             return response()->json([
                 'steps' => $steps,
@@ -840,11 +842,11 @@ class ContractController extends Controller
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
 
             $Daily = Dailys::findOrFail($id);
-            $out->writeln("Daily" . $Daily);
+           // $out->writeln("Daily" . $Daily);
 
             try {
                 $dailyStructure = $Daily->dailyStructure()->first();
-                $out->writeln("dailyStructure" . $dailyStructure);
+               // $out->writeln("dailyStructure" . $dailyStructure);
 
             } catch (\Exception $e) {
                 $out->writeln("dailyStructure" . $e->getMessage());
@@ -864,7 +866,7 @@ class ContractController extends Controller
                     $field->dropdown_lists = $dropdownLists;
                     return $field;});
               
-                $out->writeln("fields" . $fields);
+              //  $out->writeln("fields" . $fields);
 
 
                 $step = [
@@ -883,6 +885,78 @@ class ContractController extends Controller
         }
     }
 
+    public function getEstructureDailyv2($id)
+    {
+        //el parametro id es el id de la daily
+        try {
+            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
+
+            $Daily = Dailys::findOrFail($id);
+           // $out->writeln("Daily" . $Daily);
+
+            try {
+                $dailyStructure = $Daily->dailyStructure()->first();
+                
+                //$out->writeln("dailyStructure" . $dailyStructure);
+
+            } catch (\Exception $e) {
+                $out->writeln("dailyStructure" . $e->getMessage());
+                \Log::error("Error al obtener la primera estructura diaria: " . $e->getMessage());
+            }
+          //  $out->writeln("dailyStructure" . $dailyStructure);
+
+            $dailySheets = $dailyStructure->dailySheets()->orderBy('step')->get();
+
+            $steps = [];
+            foreach ($dailySheets as $sheet) {
+                $fields = $sheet->fields()->orderBy('step')->get();
+                $fields = $fields->map(function ($field) {
+                    $dropdownLists = DropdownLists::where('field_id', $field->id)->get();
+                    $field->dropdown_lists = $dropdownLists;
+                    return $field;
+                });
+                $out->writeln("fields" . $fields);
+
+
+                $step = [
+                    'idSheet' => $sheet->id,
+                    'sheet' => $sheet->name,
+                    'fields' => $fields,
+                ];
+                $steps[] = $step;
+            }
+
+
+            try {
+                $valuesRows = ValuesRow::where('daily_id', $id)->get();
+            } catch (\Exception $e) {
+                $out->writeln($e->getMessage());
+                return response()->json(['error' => 'Error al obtener los valores de la fila', 'message' => $e->getMessage()], 500);
+            }
+            //cambio el nombre de col por los correctos de cada field y le agrego el step
+            $valuesRowsColCorrectas = [];
+            foreach ($steps as $step) {
+                foreach ($valuesRows as $valueRowIndex => $valueRow) {
+                    foreach ($step['fields'] as $field) {
+                        $columnName = 'col_' . $field['step'];
+                        $fieldnamewitsheet = $field['name'] . '-' .$field['daily_sheet_id'];
+                        if (isset($valueRow->$columnName)) {
+                            $valuesRowsColCorrectas[$valueRowIndex][$fieldnamewitsheet] = $valueRow->$columnName;
+                        }
+                    }
+                }
+            }
+          //  $out->writeln(json_encode($valuesRowsColCorrectas));
+            //$out->writeln(json_encode($valuesRows));
+            return response()->json([
+                'steps' => $steps,
+                'values' => $valuesRowsColCorrectas,
+            ], 200);
+            
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al obtener estructura del contrato', 'message' => $e->getMessage()], 500);
+        }
+    }
 
 
     private function syncRoles($contract, $roleName, $userIds)
