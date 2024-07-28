@@ -8,11 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class ValuesRow extends Model
 {
         // Especifica el nombre de la tabla
-        protected $table = 'values_row';
+    protected $table = 'values_row';
     use HasFactory;
 
     protected $fillable = [
         'daily_id',
+        'daily_sheet_id',
         'col_1',
         'col_2',
         'col_3',
