@@ -11,6 +11,8 @@ use App\Http\Controllers\DailysController;
 use App\Http\Controllers\FieldController; 
 use App\Http\Controllers\DailyStructureController;
 use App\Http\Controllers\ValueController;
+use App\Http\Controllers\ValuesRowController;
+
 
 
 
@@ -67,7 +69,8 @@ Route::post('/fields/update/{id}', [FieldController::class, 'update']);
 Route::resource('/Dailys', DailysController::class);
 
 Route::post('/dailyStructure/create/{id}/{iguales}', [DailyStructureController::class, 'store']);
-Route::resource('/values', ValueController::class);
-Route::put('/updateValues', [ValueController::class, 'updateValues']);
-Route::delete('/values', [ValueController::class, 'deleteValues']);
+Route::put('/updateValues', [ValuesRowController::class, 'updateValues']);
+Route::delete('/values', [ValuesRowController::class, 'deleteValues']);
 
+Route::post('/valuesRow',  [ValuesRowController::class, 'store']);
+Route::post('/copyValuesRow', [ValuesRowController::class, 'copyValuesRow']);

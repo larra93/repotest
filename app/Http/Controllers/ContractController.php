@@ -138,7 +138,7 @@ class ContractController extends Controller
                 }
             }
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-    //* Start crear estructura de daily
+            //* Start crear estructura de daily
             try {
                 $dailyStructure = DailyStructure::create([
                     'contract_id' => $contract->id,
@@ -147,8 +147,8 @@ class ContractController extends Controller
             } catch (\Exception $e) {
                 return response()->json(['error' => 'Error al crear la estructura diaria', 'message' => $e->getMessage()], 500);
             }
-    //* Fin estructura de daily
-    //* Personal
+            //* Fin estructura de daily
+            //* Personal
             $personalSheet = DailySheet::create([
                 'name' => 'Personal',
                 'step' => '1',
@@ -162,7 +162,7 @@ class ContractController extends Controller
                 'required' => "Si",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
-            $generoField =  Field::create([
+            $generoField = Field::create([
                 'name' => 'Género',
                 'description' => 'Género del trabajador',
                 'field_type' => 'list',
@@ -186,7 +186,7 @@ class ContractController extends Controller
                 'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
-            $categoriaField=  Field::create([
+            $categoriaField = Field::create([
                 'name' => 'Categoría',
                 'description' => 'Categoría del trabajador (Directo, Indirecto, etc)',
                 'field_type' => 'list',
@@ -390,7 +390,7 @@ class ContractController extends Controller
                 'field_id' => $hhtrabajadasField->id,
                 'value' => '12',
             ]);
-  
+
             Field::create([
                 'name' => 'Comentarios EECC',
                 'description' => 'Comentarios de la Empresa colaboradora',
@@ -407,9 +407,9 @@ class ContractController extends Controller
                 'required' => "No",
                 'daily_sheet_id' => $personalSheet->id,
             ]);
-    //* Fin Personal            
+            //* Fin Personal            
 
-    //* Maquinarias
+            //* Maquinarias
             $maquinariaSheet = DailySheet::create([
                 'name' => 'Maquinarias',
                 'step' => '2',
@@ -439,7 +439,7 @@ class ContractController extends Controller
                 'required' => "No",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
-            $turnoE= Field::create([
+            $turnoE = Field::create([
                 'name' => 'Turno Equipo',
                 'description' => 'Turno de la maquinaria (Diurno, Nocturno)',
                 'field_type' => 'list',
@@ -527,7 +527,7 @@ class ContractController extends Controller
                 'required' => "No",
                 'daily_sheet_id' => $maquinariaSheet->id,
             ]);
-    //* Fin Maquinarias
+            //* Fin Maquinarias
             //* Interferencias   
             $interferenciasSheet = DailySheet::create([
                 'name' => 'Interferencias',
@@ -586,7 +586,7 @@ class ContractController extends Controller
                 'field_id' => $categoriaIField->id,
                 'value' => 'Condición climática',
             ]);
-            
+
             $responsableI = Field::create([
                 'name' => 'Responsable',
                 'description' => 'Responsable de la interferencia (EECC, Codelco, Otro)',
@@ -823,7 +823,7 @@ class ContractController extends Controller
                 ];
                 $steps[] = $step;
             }
-            
+
             //$out->writeln("dailysheets" . $dailySheets)
             return response()->json([
                 'steps' => $steps,
@@ -842,82 +842,29 @@ class ContractController extends Controller
             $out = new \Symfony\Component\Console\Output\ConsoleOutput();
 
             $Daily = Dailys::findOrFail($id);
-           // $out->writeln("Daily" . $Daily);
+            // $out->writeln("Daily" . $Daily);
 
             try {
                 $dailyStructure = $Daily->dailyStructure()->first();
-               // $out->writeln("dailyStructure" . $dailyStructure);
 
-            } catch (\Exception $e) {
-                $out->writeln("dailyStructure" . $e->getMessage());
-                \Log::error("Error al obtener la primera estructura diaria: " . $e->getMessage());
-            }
-          //  $out->writeln("dailyStructure" . $dailyStructure);
-
-            $dailySheets = $dailyStructure->dailySheets()->orderBy('step')->get();
-
-            $steps = [];
-            foreach ($dailySheets as $sheet) {
-                $fields = $sheet->fields()->with(['values' => function ($query) use ($id) {
-                    $query->where('daily_id', $id);
-                }])->orderBy('step')->get();
-                $fields =  $fields->map(function ($field) {
-                    $dropdownLists = DropdownLists::where('field_id', $field->id)->get();
-                    $field->dropdown_lists = $dropdownLists;
-                    return $field;});
-              
-              //  $out->writeln("fields" . $fields);
-
-
-                $step = [
-                    'idSheet' => $sheet->id,
-                    'sheet' => $sheet->name,
-                    'fields' => $fields,
-                ];
-                $steps[] = $step;
-            }
-
-            return response()->json([
-                'steps' => $steps,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al obtener estructura del contrato', 'message' => $e->getMessage()], 500);
-        }
-    }
-
-    public function getEstructureDailyv2($id)
-    {
-        //el parametro id es el id de la daily
-        try {
-            $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-
-            $Daily = Dailys::findOrFail($id);
-           // $out->writeln("Daily" . $Daily);
-
-            try {
-                $dailyStructure = $Daily->dailyStructure()->first();
-                
                 //$out->writeln("dailyStructure" . $dailyStructure);
 
             } catch (\Exception $e) {
                 $out->writeln("dailyStructure" . $e->getMessage());
                 \Log::error("Error al obtener la primera estructura diaria: " . $e->getMessage());
             }
-          //  $out->writeln("dailyStructure" . $dailyStructure);
+            //  $out->writeln("dailyStructure" . $dailyStructure);
 
             $dailySheets = $dailyStructure->dailySheets()->orderBy('step')->get();
-
             $steps = [];
             foreach ($dailySheets as $sheet) {
+
                 $fields = $sheet->fields()->orderBy('step')->get();
                 $fields = $fields->map(function ($field) {
                     $dropdownLists = DropdownLists::where('field_id', $field->id)->get();
                     $field->dropdown_lists = $dropdownLists;
                     return $field;
                 });
-                $out->writeln("fields" . $fields);
-
-
                 $step = [
                     'idSheet' => $sheet->id,
                     'sheet' => $sheet->name,
@@ -925,34 +872,53 @@ class ContractController extends Controller
                 ];
                 $steps[] = $step;
             }
-
-
             try {
                 $valuesRows = ValuesRow::where('daily_id', $id)->get();
             } catch (\Exception $e) {
                 $out->writeln($e->getMessage());
                 return response()->json(['error' => 'Error al obtener los valores de la fila', 'message' => $e->getMessage()], 500);
             }
-            //cambio el nombre de col por los correctos de cada field y le agrego el step
+
+            //comienza cambiar el nombre de col por los correctos de cada field y le agregarle el idsheet
             $valuesRowsColCorrectas = [];
+            //por cada hoja
             foreach ($steps as $step) {
-                foreach ($valuesRows as $valueRowIndex => $valueRow) {
-                    foreach ($step['fields'] as $field) {
-                        $columnName = 'col_' . $field['step'];
-                        $fieldnamewitsheet = $field['name'] . '-' .$field['daily_sheet_id'];
-                        if (isset($valueRow->$columnName)) {
-                            $valuesRowsColCorrectas[$valueRowIndex][$fieldnamewitsheet] = $valueRow->$columnName;
+                $idSheet = $step['idSheet'];
+                // Inicializa el array para el idSheet actual
+                $valuesRowsColCorrectas[$idSheet] = [];
+                //por cada fila me aseguro que el idsheet de la fila sea igual al id de la hoja
+                foreach ($valuesRows as $valueRow) {
+                    if ($valueRow->daily_sheet_id == $idSheet) {                       
+                        //idSheetasColumn es para poder tener el id de la sheet como columna
+                        $idSheetasColumn = 'id-' . $idSheet;
+                        $rowObject = [
+                            $idSheetasColumn => $valueRow->id,
+                        ];
+                        //cambio los col_ por los nombres correctos de los fields
+                        foreach ($step['fields'] as $field) {
+                            $columnName = 'col_' . $field['step'];
+                            $fieldnamewithsheet = $field['name'] . '-' . $field['daily_sheet_id'];
+                            if (isset($valueRow->$columnName)) {
+                                $rowObject[$fieldnamewithsheet] = $valueRow->$columnName;
+                            }
                         }
+                        // Agrega el objeto al array del idSheet actual
+                        $valuesRowsColCorrectas[$idSheet][] = $rowObject;
                     }
+
+
                 }
+
             }
-          //  $out->writeln(json_encode($valuesRowsColCorrectas));
+
+
+            $out->writeln(json_encode($valuesRowsColCorrectas));
             //$out->writeln(json_encode($valuesRows));
             return response()->json([
                 'steps' => $steps,
                 'values' => $valuesRowsColCorrectas,
             ], 200);
-            
+
         } catch (\Exception $e) {
             return response()->json(['error' => 'Error al obtener estructura del contrato', 'message' => $e->getMessage()], 500);
         }

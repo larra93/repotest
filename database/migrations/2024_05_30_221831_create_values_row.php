@@ -42,11 +42,13 @@ return new class extends Migration
 
 
             $table->unsignedBigInteger('daily_id');
+            $table->unsignedBigInteger('daily_sheet_id');
             $table->timestamps();
 
             
             
             $table->foreign('daily_id')->references('id')->on('dailys')->onDelete('cascade');
+            $table->foreign('daily_sheet_id')->references('id')->on('daily_sheets')->onDelete('cascade');
 
         });
     }
@@ -56,6 +58,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('values');
+        Schema::dropIfExists('values_row');
     }
 };
