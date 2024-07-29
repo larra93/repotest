@@ -73,4 +73,4 @@ Route::put('/updateValues', [ValuesRowController::class, 'updateValues']);
 Route::delete('/values', [ValuesRowController::class, 'deleteValues']);
 
 Route::post('/valuesRow',  [ValuesRowController::class, 'store']);
-
+Route::post('/copyValuesRow', [ValuesRowController::class, 'copyValuesRow']);

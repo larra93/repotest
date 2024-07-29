@@ -93,7 +93,68 @@ class ValuesRowController extends Controller
     }
 }
 
+public function copyValuesRow(Request $request)
+{
+    $request->validate([
+        'selectedDaily' => 'required|exists:dailys,id',
+        'idDaily' => 'required|exists:dailys,id',
+    ]);
 
+    $selectedDaily = $request->input('selectedDaily');
+    $idDaily = $request->input('idDaily');
+
+    try {
+        $valuesRows = ValuesRow::where('daily_id', $selectedDaily)->get();
+        
+        foreach ($valuesRows as $row) {
+            ValuesRow::create([
+                'col_1' => $row->col_1,
+                'col_2' => $row->col_2,
+                'col_3' => $row->col_3,
+                'col_4' => $row->col_4,
+                'col_5' => $row->col_5,
+                'col_6' => $row->col_6,
+                'col_7' => $row->col_7,
+                'col_8' => $row->col_8,
+                'col_9' => $row->col_9,
+                'col_10' => $row->col_10,
+                'col_11' => $row->col_11,
+                'col_12' => $row->col_12,
+                'col_13' => $row->col_13,
+                'col_14' => $row->col_14,
+                'col_15' => $row->col_15,
+                'col_16' => $row->col_16,
+                'col_17' => $row->col_17,
+                'col_18' => $row->col_18,
+                'col_19' => $row->col_19,
+                'col_20' => $row->col_20,
+                'col_21' => $row->col_21,
+                'col_22' => $row->col_22,
+                'col_23' => $row->col_23,
+                'col_24' => $row->col_24,
+                'col_25' => $row->col_25,
+                'daily_id' => $idDaily,
+                'daily_sheet_id' => $row->daily_sheet_id,
+            ]);
+        }
+
+        Log::info('Values copiadas correctamente', [
+            'selectedDaily' => $selectedDaily,
+            'idDaily' => $idDaily,
+            'valuesRows' => $valuesRows->toArray()
+        ]);
+
+        return response()->json(['message' => 'Values copiadas correctamente']);
+    } catch (Exception $e) {
+        Log::error('Error copying values', [
+            'error' => $e->getMessage(),
+            'selectedDaily' => $selectedDaily,
+            'idDaily' => $idDaily
+        ]);
+
+        return response()->json(['message' => 'Error copying values'], 500);
+    }
+}
 
     /**
      * Remove the specified resource from storage.
